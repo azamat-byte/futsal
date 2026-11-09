@@ -627,15 +627,65 @@ def run_overlay(player_model, field_model, team_classifier, config=None):
     return stats
 
 
+def default_roboflow_factory():
+    """Built-in factory using ROBOFLOW_API_KEY and the user's two Roboflow models."""
+    from futsal.phase1.config import DetectorConfig, TeamConfig
+    from futsal.phase1.detection import RoboflowDetector
+    from futsal.phase1.teams import JerseyColorExtractor, TeamClassifier
+
+    api_key = os.environ.get("ROBOFLOW_API_KEY", "").strip()
+    if not api_key:
+        raise ValueError("Set $env:ROBOFLOW_API_KEY before running futsal_live_overlay.py")
+
+    class _ModelAdapter:
+        def __init__(self, model_id: str) -> None:
+            self.det = RoboflowDetector(DetectorConfig(model_id=model_id), api_key)
+
+        def infer(self, frame, confidence=0.3):
+            return [self.det.infer(frame)]
+
+    class _OnlineHSVClassifier:
+        def __init__(self) -> None:
+            self.extractor = JerseyColorExtractor()
+            self.classifier = TeamClassifier(TeamConfig(min_samples=6, min_center_distance=0.05))
+            self.buffer = []
+            self.fitted = False
+
+        def predict(self, crops):
+            feats = [self.extractor.from_crop(c) for c in crops]
+            if not self.fitted:
+                self.buffer.extend(feats)
+                if len(self.buffer) >= 6:
+                    try:
+                        self.classifier.fit(self.buffer)
+                        self.fitted = True
+                    except ValueError:
+                        pass
+            if not self.fitted:
+                # Fallback split by hue until 6 samples are collected
+                return np.array([int(f[0] < 0) for f in feats], dtype=int)
+            out = []
+            for f in feats:
+                label = self.classifier.predict(f)
+                out.append(0 if label == "team_a" else (1 if label == "team_b" else 2))
+            return np.array(out, dtype=int)
+
+    return (
+        _ModelAdapter("s-workspace-bimfr/new_futsal-2-rfdetr-medium-t1"),
+        _ModelAdapter("s-workspace-bimfr/keypoints-ovj9c-11-rfdetr-keypoint-two-stage-t1"),
+        _OnlineHSVClassifier(),
+    )
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument("--source", default=SOURCE_VIDEO_PATH)
-    parser.add_argument("--output", default=OUTPUT_VIDEO_PATH)
+    parser.add_argument("--source", default="1111.mp4")
+    parser.add_argument("--output", default="outputs/futsal_live_overlay.mp4")
     parser.add_argument(
         "--model-factory",
-        required=True,
+        default="futsal_live_overlay:default_roboflow_factory",
         metavar="MODULE:FUNCTION",
         help="Zero-argument function returning (player_model, field_model, team_classifier)",
     )

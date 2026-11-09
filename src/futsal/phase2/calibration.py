@@ -95,8 +95,8 @@ class CameraCalibration:
         return mask
 
     def _propagate(self, gray, current_boxes):
-        points = cv2.goodFeaturesToTrack(self.previous_gray, 500, .01, 12, mask=self.previous_mask)
-        if points is None or len(points) < 12:
+        points = cv2.goodFeaturesToTrack(self.previous_gray, 500, 0.005, 8, mask=self.previous_mask)
+        if points is None or len(points) < 8:
             raise ValueError("insufficient_floor_texture")
         following, status, _ = cv2.calcOpticalFlowPyrLK(self.previous_gray, gray, points, None)
         if following is None:
@@ -105,20 +105,20 @@ class CameraCalibration:
         if back is None or status is None or back_status is None:
             raise ValueError("optical_flow_failed")
         keep = status.ravel().astype(bool) & back_status.ravel().astype(bool)
-        keep &= np.linalg.norm(back - points, axis=(1, 2)) < 1.5
+        keep &= np.linalg.norm(back - points, axis=(1, 2)) < 2.0
         p, q = points.reshape(-1, 2), following.reshape(-1, 2)
         keep &= np.isfinite(q).all(axis=1) & (q[:, 0] >= 0) & (q[:, 0] < gray.shape[1])
         keep &= (q[:, 1] >= 0) & (q[:, 1] < gray.shape[0])
         for x1, y1, x2, y2 in np.asarray(current_boxes).reshape(-1, 4):
-            keep &= ~((q[:, 0] >= x1-15) & (q[:, 0] <= x2+15) &
-                      (q[:, 1] >= y1-15) & (q[:, 1] <= y2+15))
-        if keep.sum() < 12:
+            keep &= ~((q[:, 0] >= x1 - 15) & (q[:, 0] <= x2 + 15) &
+                      (q[:, 1] >= y1 - 15) & (q[:, 1] <= y2 + 15))
+        if keep.sum() < 8:
             raise ValueError("insufficient_consistent_flow")
-        motion, inliers = cv2.findHomography(p[keep], q[keep], cv2.RANSAC, 2.5)
-        if motion is None or inliers is None or inliers.sum() < 12 or inliers.mean() < .75:
+        motion, inliers = cv2.findHomography(p[keep], q[keep], cv2.RANSAC, 3.0)
+        if motion is None or inliers is None or inliers.sum() < 8 or inliers.mean() < 0.65:
             raise ValueError("unsupported_camera_motion")
         selected = q[keep][inliers.ravel().astype(bool)]
-        if cv2.contourArea(cv2.convexHull(selected)) < gray.size * .02:
+        if cv2.contourArea(cv2.convexHull(selected)) < gray.size * 0.01:
             raise ValueError("flow_support_too_local")
         h, w = gray.shape
         corners = np.array([[0, 0], [w, 0], [w, h], [0, h]], float)

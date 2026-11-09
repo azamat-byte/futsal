@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "source_sha256": "12b44f5fd13c8d2432c8543cfc8682714d3287535ad01cc50d03aca06115ac7e",
+  "image_size": [
+    1920,
+    1080
+  ],
+  "pitch_size_m": [
+    40,
+    20
+  ],
+  "scale_verified": false,
+  "max_error_px": 8.0,
+  "anchors": [
+    {
+      "frame_index": 150,
+      "image_points": [
+        [
+          895.0,
+          445.0
+        ],
+        [
+          337.0,
+          1009.0
+        ],
+        [
+          1458.0,
+          1003.0
+        ],
+        [
+          896.5,
+          574.0
+        ]
+      ],
+      "pitch_points": [
+        [
+          20.0,
+          0.0
+        ],
+        [
+          15.0,
+          20.0
+        ],
+        [
+          25.0,
+          20.0
+        ],
+        [
+          20.0,
+          7.0
+        ]
+      ],
+      "check_image_points": [
+        [
+          900.0,
+          1006.0
+        ],
+        [
+          898.0,
+          728.0
+        ]
+      ],
+      "check_pitch_points": [
+        [
+          20.0,
+          20.0
+        ],
+        [
+          20.0,
+          13.0
+        ]
+      ],
+      "landmark_names": [
+        "Halfway / far touchline",
+        "Near substitution mark, x=15",
+        "Near substitution mark, x=25",
+        "Circle / halfway, far",
+        "Halfway / near touchline",
+        "Circle / halfway, near"
+      ],
+      "reviewed": true
+    }
+  ]
+}
