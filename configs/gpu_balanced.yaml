@@ -1,0 +1,8 @@
+model: best.pt
+device: '0'
+imgsz: 1280
+sample_fps: 10
+confidence: 0.08
+tracker: botsort
+duration: 60
+render: true

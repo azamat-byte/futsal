@@ -1,0 +1,2 @@
+# Install the appropriate PyTorch CUDA wheel first on Windows; retain Colab's supplied CUDA runtime.
+-e .

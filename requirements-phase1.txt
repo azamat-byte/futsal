@@ -1,0 +1,7 @@
+# Minimal Phase 1 environment; no torch, training, or dashboard dependencies.
+numpy>=1.26,<2
+opencv-python>=4.8.1.78,<4.11
+scikit-learn>=1.5,<2
+pandas>=2.2,<3
+supervision==0.25.1
+requests>=2.32,<3

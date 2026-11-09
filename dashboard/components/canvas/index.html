@@ -1,0 +1,17 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+body{margin:0;background:#101b2a;color:#c9d7e8;font:13px system-ui}canvas{width:100%;cursor:crosshair;display:block;border-radius:8px}button{background:#21334c;color:white;border:0;padding:6px 12px;border-radius:4px;margin:5px}p{margin:5px}
+</style></head><body><p id="help"></p><canvas id="canvas"></canvas><button id="undo">Undo</button><button id="clear">Clear new marks</button><script>
+const canvas=document.getElementById('canvas'),ctx=canvas.getContext('2d');let args={},marks=[],img=new Image(),down=null,lastToken=null;
+function send(type,extra={}){parent.postMessage({isStreamlitMessage:true,type,...extra},'*')}
+function value(){send('streamlit:setComponentValue',{value:marks,dataType:'json'})}
+function draw(){if(!img.width)return;canvas.width=img.width;canvas.height=img.height;ctx.drawImage(img,0,0);ctx.lineWidth=3;ctx.font='20px sans-serif';
+(args.boxes||[]).forEach(b=>{ctx.strokeStyle='#42d4bf';ctx.strokeRect(b.x1,b.y1,b.x2-b.x1,b.y2-b.y1);ctx.fillStyle='#42d4bf';ctx.fillText(String(b.class_id),b.x1,b.y1-4)});
+marks.forEach((m,i)=>{ctx.strokeStyle='#ffbe57';ctx.fillStyle='#ffbe57';if(args.mode==='boxes'){ctx.strokeRect(m.x1,m.y1,m.x2-m.x1,m.y2-m.y1)}else{ctx.beginPath();ctx.arc(m[0],m[1],6,0,7);ctx.fill();ctx.fillText(String(i+1),m[0]+9,m[1])}});
+send('streamlit:setFrameHeight',{height:Math.round(canvas.getBoundingClientRect().height)+66})}
+function point(e){const r=canvas.getBoundingClientRect();return [(e.clientX-r.left)*canvas.width/r.width,(e.clientY-r.top)*canvas.height/r.height]}
+canvas.addEventListener('pointerdown',e=>{down=point(e);canvas.setPointerCapture(e.pointerId)});
+canvas.addEventListener('pointerup',e=>{let p=point(e);if(!down)return;if(args.mode==='boxes'){let x1=Math.min(down[0],p[0]),y1=Math.min(down[1],p[1]),x2=Math.max(down[0],p[0]),y2=Math.max(down[1],p[1]);if(x2-x1>2&&y2-y1>2)marks.push({class_id:args.class_id,x1,y1,x2,y2})}else marks.push(p);down=null;draw();value()});
+document.getElementById('undo').onclick=()=>{marks.pop();draw();value()};document.getElementById('clear').onclick=()=>{marks=[];draw();value()};
+window.addEventListener('message',e=>{if(e.data.type!=='streamlit:render')return;args=e.data.args;if(lastToken!==args.token){marks=[];lastToken=args.token}document.getElementById('help').textContent=args.mode==='boxes'?'Drag to add boxes. Existing boxes can be edited or deleted in the table below.':'Click court landmarks in order, then enter matching court coordinates below.';img.onload=draw;img.src=args.image});
+window.addEventListener('resize',draw);send('streamlit:componentReady',{apiVersion:1});
+</script></body></html>

@@ -1,0 +1,21 @@
+model: best.pt
+device: '0'
+imgsz: 1280
+sample_fps: 20
+confidence: 0.05
+person_confidence: 0.05
+ball_confidence: 0.05
+tracker: botsort
+track_low_threshold: 0.05
+track_high_threshold: 0.25
+track_new_threshold: 0.35
+track_buffer_seconds: 1.5
+track_min_observations: 2
+smooth_boxes: true
+ball_confirmation_frames: 2
+ball_start_confidence: 0.20
+ball_max_gap: 0.25
+start: 0
+duration: 10
+radar: false
+# No interpolation or new detector. Enable appearance_reid only with local OSNet weights.

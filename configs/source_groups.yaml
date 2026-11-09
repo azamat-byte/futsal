@@ -1,0 +1,23 @@
+# Proposed source grouping based on filenames and visible scoreboards. Confirm before training.
+# Dataset image prefixes sc/sca show ARG-POR; scan shows BRA-KAZ.
+groups:
+  argentina_portugal_2021:
+    dataset_prefixes: [sc, sca]
+    proposed_split: train
+  brazil_kazakhstan_2021:
+    dataset_prefixes: [scan]
+    source_video: videoplayback (1).mp4
+    proposed_split: train
+    evidence: Visible Brazil/Kazakhstan scoreboard in dataset; confirm full source provenance
+  sporting_benfica:
+    source_video: Sporting - Benfica. LIVESTREAM.mp4
+    proposed_split: train
+  palma_kairat_2025:
+    source_video: Palma Futsal - Kairat Almaty _ Final UEFA Futsal Champions League 2025.mp4
+    proposed_split: train
+  ukraine_france_2024:
+    source_video: Coupe du monde Futsal 2024 - Le replay intégral de Ukraine-France.mp4
+    proposed_split: val
+  france_argentina_2024:
+    source_video: Coupe du monde Futsal 2024 - Le replay intégral de France-Argentine.mp4
+    proposed_split: test

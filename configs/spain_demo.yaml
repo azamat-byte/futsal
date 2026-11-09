@@ -1,0 +1,18 @@
+model: best.pt
+device: '0'
+imgsz: 1280
+sample_fps: 15
+confidence: 0.08
+tracker: bytetrack
+start: 120
+duration: 8
+team_mode: color
+render: true
+radar: true
+radar_overlay: true
+show_trails: true
+calibration_file: configs/spain_demo_calibration.json
+calibration_max_age: 8
+scale_verified: false
+# Source: WILD ENDING! Extra-time of Spain v Portugal _ 2021 #FutsalWC.mp4
+# This is a geometric demonstration with assumed court dimensions, not a speed benchmark.

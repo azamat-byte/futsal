@@ -1,0 +1,14 @@
+[theme]
+base = "dark"
+primaryColor = "#40c9a9"
+backgroundColor = "#0b1421"
+secondaryBackgroundColor = "#14243a"
+textColor = "#e4edf7"
+[server]
+address = "127.0.0.1"
+headless = true
+maxUploadSize = 2048
+folderWatchList = ["src/futsal"]
+runOnSave = true
+[browser]
+gatherUsageStats = false

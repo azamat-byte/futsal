@@ -1,0 +1,18 @@
+{
+  "detector": {
+    "model_id": "s-workspace-bimfr/new_futsal-2-rfdetr-medium-t1",
+    "api_url": "https://serverless.roboflow.com",
+    "confidence": 0.1,
+    "nms_iou": 0.7
+  },
+  "tracking": {
+    "activation_threshold": 0.3,
+    "lost_seconds": 1.0,
+    "minimum_consecutive_frames": 2
+  },
+  "teams": {
+    "cluster_labels": ["team_a", "team_b"],
+    "calibration_frames": 40,
+    "calibration_stride": 15
+  }
+}

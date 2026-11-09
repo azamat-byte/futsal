@@ -1,0 +1,15 @@
+model: best.pt
+device: '0'
+imgsz: 1280
+sample_fps: 15
+confidence: 0.08
+tracker: bytetrack
+start: 600
+duration: 10
+team_mode: color
+render: true
+radar: true
+radar_overlay: true
+show_trails: true
+scale_verified: false
+# Batch size is one. T4 execution must be checked in the user's Colab runtime.
