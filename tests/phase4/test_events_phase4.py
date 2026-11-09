@@ -9,6 +9,26 @@ import supervision as sv
 from futsal.phase1.pipeline import TRACK_COLUMNS
 from futsal.phase2.pipeline import EXTRA_COLUMNS
 from futsal.phase4 import BallSelector, EventEngine, Phase4Pipeline, PossessionEngine, match_boxes
+from futsal.roboflow_keypoints import COURT_26_POINTS, DEFAULT_DETECTION_MODEL_ID, DEFAULT_KEYPOINT_MODEL_ID, RoboflowKeypointModel
+
+
+def test_roboflow_keypoint_model_defaults_and_auto_anchor(monkeypatch):
+    assert DEFAULT_DETECTION_MODEL_ID == "s-workspace-bimfr/new_futsal-2-rfdetr-medium-t1"
+    assert DEFAULT_KEYPOINT_MODEL_ID == "s-workspace-bimfr/keypoints-ovj9c-11-rfdetr-keypoint-two-stage-t1"
+
+    kp_model = RoboflowKeypointModel(api_key="test-secret")
+    assert kp_model.client.config.model_id == "s-workspace-bimfr/keypoints-ovj9c-11-rfdetr-keypoint-two-stage-t1"
+
+    # Simulate 26 pitch keypoints projected with 10x scale + (20, 20) offset
+    fake_kps = [{"x": 20.0 + 10.0 * mx, "y": 20.0 + 10.0 * my, "confidence": 0.95} for _, (mx, my) in COURT_26_POINTS]
+    monkeypatch.setattr(kp_model, "infer", lambda frame: {"predictions": [{"class": "pitch", "keypoints": fake_kps}]})
+    anchor = kp_model.fit_frame_anchor(np.zeros((300, 500, 3), dtype=np.uint8), frame_index=42)
+    assert anchor is not None
+    assert anchor["frame_index"] == 42
+    assert anchor["reviewed"] is True
+    assert len(anchor["image_points"]) >= 4
+    assert len(anchor["check_image_points"]) == 2
+    kp_model.close()
 
 
 def test_hungarian_box_matching_for_pose():

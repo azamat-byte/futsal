@@ -2,8 +2,10 @@
 
 import argparse
 import logging
+import os
 from pathlib import Path
 
+from futsal.roboflow_keypoints import DEFAULT_KEYPOINT_MODEL_ID, RoboflowKeypointModel
 from .picker import pick
 from .pipeline import Phase2Pipeline
 
@@ -15,6 +17,17 @@ def main(argv=None):
     calibrate.add_argument("--video", type=Path, required=True)
     calibrate.add_argument("--output", type=Path, required=True)
     calibrate.add_argument("--frame", type=int, default=0)
+    auto = commands.add_parser(
+        "auto-calibrate",
+        help="Automatically calibrate pitch homography using Roboflow keypoint model",
+    )
+    auto.add_argument("--video", type=Path, required=True)
+    auto.add_argument("--output", type=Path, required=True)
+    auto.add_argument("--model-id", default=DEFAULT_KEYPOINT_MODEL_ID)
+    auto.add_argument("--start-frame", type=int, default=0)
+    auto.add_argument("--max-frames", type=int, default=500)
+    auto.add_argument("--stride", type=int, default=30)
+    auto.add_argument("--keypoint-threshold", type=float, default=0.35)
     render = commands.add_parser("render", help="Reuse a completed Phase 1 run; no API key needed")
     render.add_argument("--phase1-run", type=Path, required=True)
     render.add_argument("--calibration", type=Path, required=True)
@@ -32,6 +45,22 @@ def main(argv=None):
             if output is None:
                 logging.info("Closed without saving a calibration")
                 return 0
+        elif args.command == "auto-calibrate":
+            kp_model = RoboflowKeypointModel(
+                api_key=os.environ.get("ROBOFLOW_API_KEY", ""),
+                model_id=args.model_id,
+                keypoint_threshold=args.keypoint_threshold,
+            )
+            try:
+                output = kp_model.auto_calibrate_video(
+                    args.video,
+                    args.output,
+                    start_frame=args.start_frame,
+                    max_frames=args.max_frames,
+                    stride=args.stride,
+                )
+            finally:
+                kp_model.close()
         else:
             output = Phase2Pipeline().run(args.phase1_run, args.calibration, args.output,
                                           args.max_anchor_age, args.video, args.max_frames, args.start_frame)
