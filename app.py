@@ -186,7 +186,7 @@ def main() -> None:
         if not player_summary_df.empty:
             c1, c2 = st.columns([3, 2])
             with c1:
-                st.dataframe(player_summary_df, use_container_width=True)
+                st.dataframe(player_summary_df, width="stretch")
             with c2:
                 valid_p = player_summary_df.dropna(subset=["observed_distance_m"]).copy()
                 if not valid_p.empty:
@@ -200,7 +200,7 @@ def main() -> None:
                         labels={"player_label": "Player ID", "observed_distance_m": "Distance (m)"},
                         color_discrete_map={"team_a": "#00BFFF", "team_b": "#FF4081", "unknown": "#90A4AE"},
                     )
-                    st.plotly_chart(fig_bar, use_container_width=True)
+                    st.plotly_chart(fig_bar, width="stretch")
         else:
             st.info("Run Phase 3 or Phase 5 to populate `player_summary.csv`.")
 
@@ -210,12 +210,12 @@ def main() -> None:
         choice = st.selectbox("Select Team or Player ID Heatmap", options=options)
         st.plotly_chart(
             render_pitch_heatmap(heatmaps[choice], title=f"2D Court Occupancy Heatmap — {choice}"),
-            use_container_width=True,
+            width="stretch",
         )
 
     with tab_events:
         if not events_df.empty:
-            st.dataframe(events_df, use_container_width=True)
+            st.dataframe(events_df, width="stretch")
         else:
             st.info("No pass/shot candidates recorded in `events.csv` for this segment.")
 

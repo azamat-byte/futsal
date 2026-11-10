@@ -122,6 +122,7 @@ class TeamClassifier:
 class _History:
     votes: deque[str]
     last_frame: int
+    locked_team: str | None = None
 
 
 class TemporalTeamAssigner:
@@ -144,11 +145,16 @@ class TemporalTeamAssigner:
         if state is None or frame_index - state.last_frame > self.ttl_frames:
             state = _History(deque(maxlen=self.config.history_size), frame_index)
             self.histories[track_id] = state
-        state.votes.append(candidate)
+        if candidate != "unknown" or state.locked_team is None:
+            state.votes.append(candidate)
         state.last_frame = frame_index
         label, votes = Counter(state.votes).most_common(1)[0]
         agreement = votes / len(state.votes)
+        if label in {"team_a", "team_b"} and votes >= max(6, self.config.min_votes * 2) and agreement >= 0.75:
+            state.locked_team = label
         if label == "unknown" or votes < self.config.min_votes or agreement < self.config.vote_fraction:
+            if state.locked_team is not None:
+                return state.locked_team, 0.85
             return "unknown", 0.0
         return label, agreement
 
