@@ -56,6 +56,9 @@ def position_groups(path: Path):
                 item["flow_inlier_ratio"] = (
                     float(row["flow_inlier_ratio"]) if row["flow_inlier_ratio"] not in ("", None) else None
                 )
+                for opt_k in ("speed_kmh", "distance_step_m", "observed_distance_m"):
+                    if opt_k in row:
+                        item[opt_k] = float(row[opt_k]) if row[opt_k] not in ("", None) else None
                 group.append(item)
             yield index, group
 

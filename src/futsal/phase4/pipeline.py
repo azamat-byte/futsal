@@ -93,10 +93,21 @@ class PossessionAnnotator(SpeedTrackingAnnotator):
         frame_index: int,
         segment_id: int,
     ) -> np.ndarray:
-        scene = self.annotate_with_metrics(frame, tracks, rows, frame_index, segment_id)
         owner_id = possession.get("owner_id")
+        base_frame = frame.copy()
+        if owner_id is not None:
+            for row in rows:
+                if int(row["track_id"]) == int(owner_id):
+                    cx = round((row["x1"] + row["x2"]) / 2)
+                    cy = round(row["y2"])
+                    rx = max(24, round((row["x2"] - row["x1"]) * 0.65))
+                    ry = max(9, round(rx * 0.35))
+                    # Draw ground ring BEFORE annotate_with_metrics so LabelAnnotator draws the text pill on top
+                    cv2.ellipse(base_frame, (cx, cy), (rx, ry), 0, -45, 235, (0, 255, 180), 3, cv2.LINE_AA)
 
-        # 1. Draw detected ankle keypoints and highlight the player in possession
+        scene = self.annotate_with_metrics(base_frame, tracks, rows, frame_index, segment_id)
+
+        # 1. Draw detected ankle keypoints and overhead EA FC pointer triangle for the player in possession
         for row in rows:
             tid = int(row["track_id"])
             for ax, ay in feet.get(tid, []):
@@ -105,10 +116,10 @@ class PossessionAnnotator(SpeedTrackingAnnotator):
                 cv2.circle(scene, pt, 5, (20, 20, 20), 1, cv2.LINE_AA)
             if owner_id is not None and tid == int(owner_id):
                 cx = round((row["x1"] + row["x2"]) / 2)
-                cy = round(row["y2"])
-                rx = max(14, round((row["x2"] - row["x1"]) * 0.55))
-                ry = max(6, round(rx * 0.35))
-                cv2.ellipse(scene, (cx, cy), (rx, ry), 0, 0, 360, (0, 255, 180), 3, cv2.LINE_AA)
+                ty = max(16, round(row["y1"]) - 8)
+                tri = np.array([[cx, ty], [cx - 8, ty - 12], [cx + 8, ty - 12]], dtype=np.int32)
+                cv2.fillPoly(scene, [tri], (0, 255, 180), cv2.LINE_AA)
+                cv2.polylines(scene, [tri], True, (20, 20, 20), 1, cv2.LINE_AA)
 
         # 2. Draw ball trajectory trail and current ball marker
         if ball is not None:
@@ -254,10 +265,13 @@ class Phase4Pipeline:
                         data={"role": np.array([r["role"] for r in rows])},
                     )
 
-                    # 1. Detect ball and estimate ankle keypoints for tracked players
-                    raw_detections = self.detector.detect(frame)
-                    ball = ball_selector.select(raw_detections, time_s, frame.shape)
+                    # 1. Estimate ankle keypoints for tracked players and detect ball (masking player shoes/socks)
                     feet = self.pose_estimator.estimate(frame, tracks)
+                    try:
+                        raw_detections = self.detector.detect(frame, rows, feet)
+                    except TypeError:
+                        raw_detections = self.detector.detect(frame)
+                    ball = ball_selector.select(raw_detections, time_s, frame.shape)
 
                     # 2. Project ball center to 2D pitch if homography is valid
                     matrix = homographies.get(index)

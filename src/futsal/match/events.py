@@ -36,10 +36,10 @@ class BallSelector:
 class PossessionEngine:
     def __init__(self, confirm_s=.12):
         self.confirm_s = confirm_s
-        self.pending = self.pending_since = self.last_time = None
+        self.pending = self.pending_since = self.last_seen = self.last_time = None
 
     def reset(self):
-        self.pending = self.pending_since = self.last_time = None
+        self.pending = self.pending_since = self.last_seen = self.last_time = None
 
     def update(self, time_s, ball, rows, feet):
         if self.last_time is not None and not 0 < time_s-self.last_time <= .25:
@@ -65,8 +65,16 @@ class PossessionEngine:
                     else:
                         candidate = distances[0][1:]
             # Without confident foot keypoints, no box-bottom surrogate is invented.
-        if candidate != self.pending:
-            self.pending, self.pending_since = candidate, time_s
+        if candidate is not None:
+            if candidate != self.pending:
+                self.pending, self.pending_since = candidate, time_s
+            self.last_seen = time_s
+        elif state in {'contested', 'free_ball'} or (
+            self.last_seen is not None and time_s - self.last_seen > .35
+        ):
+            self.pending = self.pending_since = self.last_seen = None
+        else:
+            candidate = self.pending
         if candidate:
             state = 'controlled' if time_s-self.pending_since >= self.confirm_s else 'pending'
         return dict(state=state, owner_id=candidate[0] if state == 'controlled' else None,

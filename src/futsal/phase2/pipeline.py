@@ -44,9 +44,19 @@ def stabilize_teams_and_goalkeepers(rows_by_frame: list[tuple[int, list[dict]]])
 
     locked_team: dict[tuple[int, int], str] = {}
     for key, counter in votes.items():
-        winner, count = counter.most_common(1)[0]
-        if count >= 3:
-            locked_team[key] = winner
+        total_votes = sum(counter.values())
+        a_votes = counter.get("team_a", 0)
+        b_votes = counter.get("team_b", 0)
+        # On a blue futsal court, yellow jerseys (team_a) only trigger on true Team A players,
+        # whereas hunched-over players can pick up blue court background (team_b).
+        if a_votes >= 15 and a_votes / max(1, total_votes) >= 0.20:
+            locked_team[key] = "team_a"
+        elif b_votes >= 3 and a_votes == 0:
+            locked_team[key] = "team_b"
+        else:
+            winner, count = counter.most_common(1)[0]
+            if count >= 3:
+                locked_team[key] = winner
 
     # Assign goalkeepers to whichever team defends their half of the court (left vs right)
     for (seg, tid), xs in gk_xs.items():
