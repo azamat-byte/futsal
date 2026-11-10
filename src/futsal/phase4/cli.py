@@ -11,6 +11,111 @@ from futsal.match.pose import AnklePoseEstimator, NoPoseEstimator
 from futsal.phase1.config import Phase1Config
 from futsal.phase1.detection import RoboflowDetector
 from futsal.roboflow_keypoints import DEFAULT_KEYPOINT_MODEL_ID, RoboflowKeypointModel
+class LocalYoloBallDetector:
+    """Local YOLO ball detector using tiled inference + court-ball continuity for wide-angle futsal."""
+
+    def __init__(self, weights_path: Path, device: str = "cpu", confidence: float = 0.08) -> None:
+        from ultralytics import YOLO
+
+        self.model = YOLO(str(weights_path))
+        self.device = device
+        self.confidence = confidence
+        self.last_xy: tuple[float, float] | None = None
+        self.missed: int = 0
+
+    def detect(self, frame):
+        import cv2
+        import numpy as np
+        import supervision as sv
+        from futsal.inference import tile_windows
+
+        h, w = frame.shape[:2]
+        wins = [
+            (x1, y1, x2, y2)
+            for x1, y1, x2, y2 in tile_windows(w, h, size=480, overlap=0.2)
+            if y2 > int(h * 0.35) and y1 < int(h * 0.90)
+        ]
+        crops = [frame[y1:y2, x1:x2] for x1, y1, x2, y2 in wins]
+        results = self.model.predict(crops, imgsz=640, conf=self.confidence, device=self.device, verbose=False)
+
+        candidates: list[tuple[float, float, float, float, float]] = []
+        for (ox, oy, _, _), res in zip(wins, results):
+            if res.boxes is None or len(res.boxes) == 0:
+                continue
+            xyxy = res.boxes.xyxy.cpu().numpy().astype(np.float32)
+            conf = res.boxes.conf.cpu().numpy().astype(np.float32)
+            cls_ids = res.boxes.cls.cpu().numpy().astype(int)
+            for box, cf, cid in zip(xyxy, conf, cls_ids):
+                name = str(res.names.get(int(cid), "unknown")).lower()
+                if "ball" not in name:
+                    continue
+                bx1, by1, bx2, by2 = float(box[0] + ox), float(box[1] + oy), float(box[2] + ox), float(box[3] + oy)
+                bw, bh = bx2 - bx1, by2 - by1
+                cx, cy = (bx1 + bx2) * 0.5, (by1 + by2) * 0.5
+                if not (6.0 <= bw <= 44.0 and 6.0 <= bh <= 44.0 and h * 0.38 <= cy <= h * 0.88):
+                    continue
+                score = float(cf)
+                if self.last_xy is not None:
+                    dist = float(np.hypot(cx - self.last_xy[0], cy - self.last_xy[1]))
+                    if dist <= 110.0:
+                        score = min(0.98, score + 0.35 * (1.0 - dist / 110.0))
+                    elif self.missed <= 3 and dist > 260.0:
+                        score *= 0.45
+                candidates.append((score, bx1, by1, bx2, by2))
+
+        # If tiled YOLO missed a ball touching a player's foot on the blue court, search near last_xy or on blue court
+        if not candidates or max(c[0] for c in candidates) < 0.25:
+            hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+            blue = cv2.inRange(hsv, (95, 55, 95), (128, 255, 255))
+            white = cv2.inRange(hsv, (0, 0, 185), (180, 75, 255))
+            kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (25, 25))
+            court_area = cv2.morphologyEx(blue, cv2.MORPH_CLOSE, kernel)
+            ball_mask = cv2.bitwise_and(white, court_area)
+            num, _, stats, centroids = cv2.connectedComponentsWithStats(ball_mask)
+            for i in range(1, num):
+                x, y, bw, bh, area = stats[i]
+                cx, cy = float(centroids[i][0]), float(centroids[i][1])
+                if not (35 <= area <= 360 and 6 <= bw <= 26 and 6 <= bh <= 26 and 0.55 <= bw / max(1, bh) <= 1.8):
+                    continue
+                if not (h * 0.40 <= cy <= h * 0.86 and w * 0.08 <= cx <= w * 0.94):
+                    continue
+                # Verify blue court pixels around perimeter and dark pentagon contrast inside patch
+                px1, py1 = max(0, int(cx - 16)), max(0, int(cy - 16))
+                px2, py2 = min(w, int(cx + 16)), min(h, int(cy + 16))
+                blue_frac = float(np.mean(blue[py1:py2, px1:px2] > 0))
+                patch_gray = cv2.cvtColor(frame[max(0, y - 2):min(h, y + bh + 2), max(0, x - 2):min(w, x + bw + 2)], cv2.COLOR_BGR2GRAY)
+                if blue_frac < 0.35 or patch_gray.size == 0 or float(np.std(patch_gray)) < 26.0:
+                    continue
+                score = 0.32 + 0.15 * min(1.0, float(np.std(patch_gray)) / 60.0)
+                if self.last_xy is not None:
+                    dist = float(np.hypot(cx - self.last_xy[0], cy - self.last_xy[1]))
+                    if dist <= 110.0:
+                        score += 0.30 * (1.0 - dist / 110.0)
+                    elif self.missed <= 3:
+                        continue
+                candidates.append((min(0.95, score), float(x), float(y), float(x + bw), float(y + bh)))
+
+        if not candidates:
+            self.missed += 1
+            return sv.Detections.empty()
+
+        # Sort and deduplicate so BallSelector receives a single clear winner
+        candidates.sort(key=lambda item: -item[0])
+        best_score, bx1, by1, bx2, by2 = candidates[0]
+        final_score = max(0.35, min(0.98, best_score * 1.35))
+        self.last_xy = ((bx1 + bx2) * 0.5, (by1 + by2) * 0.5)
+        self.missed = 0
+        return sv.Detections(
+            xyxy=np.array([[bx1, by1, bx2, by2]], dtype=np.float32),
+            confidence=np.array([final_score], dtype=np.float32),
+            class_id=np.array([0], dtype=int),
+            data={"class_name": np.array(["ball"]), "role": np.array(["ball"])},
+        )
+
+    def close(self) -> None:
+        pass
+
+
 from .pipeline import Phase4Pipeline
 
 
@@ -22,13 +127,14 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--phase3-run", type=Path, help="Optional completed Phase 3 run directory for speeds")
     parser.add_argument("--output", type=Path, required=True, help="New output directory for Phase 4")
     parser.add_argument("--config", type=Path, help="Phase 1 JSON config for ball detector")
+    parser.add_argument("--detector-weights", type=Path, help="Optional local YOLO detector weights (e.g. best.pt)")
     parser.add_argument(
         "--pose-model-id",
         default=DEFAULT_KEYPOINT_MODEL_ID,
         help="Roboflow keypoint/pose model ID (default: s-workspace-bimfr/keypoints-ovj9c-11-rfdetr-keypoint-two-stage-t1)",
     )
     parser.add_argument("--pose-weights", type=Path, help="Optional local YOLO pose checkpoint instead of Roboflow")
-    parser.add_argument("--device", default="cpu", help="Device for local pose inference (e.g. cpu or 0)")
+    parser.add_argument("--device", default="cpu", help="Device for local inference (e.g. cpu or 0)")
     parser.add_argument("--confirm-seconds", type=float, default=0.12, help="Temporal smoothing dwell time (s)")
     parser.add_argument("--no-pose", action="store_true", help="Disable pose inference")
     parser.add_argument("--video", type=Path, help="Optional relocated source video")
@@ -37,13 +143,21 @@ def main(argv: list[str] | None = None) -> int:
     detector = None
     pose = None
     try:
-        api_key = os.environ.get("ROBOFLOW_API_KEY", "")
+        api_key = os.environ.get("ROBOFLOW_API_KEY", "").strip()
         cfg = Phase1Config.load(args.config)
-        detector = RoboflowDetector(cfg.detector, api_key)
+        if args.detector_weights is not None:
+            detector = LocalYoloBallDetector(args.detector_weights, device=args.device)
+        elif not api_key and Path("best.pt").is_file():
+            detector = LocalYoloBallDetector(Path("best.pt"), device=args.device)
+        else:
+            detector = RoboflowDetector(cfg.detector, api_key)
+
         if args.no_pose:
             pose = NoPoseEstimator()
         elif args.pose_weights is not None:
             pose = AnklePoseEstimator(args.pose_weights, device=args.device)
+        elif not api_key and Path("yolo11n-pose.pt").is_file():
+            pose = AnklePoseEstimator(Path("yolo11n-pose.pt"), device=args.device)
         else:
             pose = RoboflowKeypointModel(
                 api_key=api_key,

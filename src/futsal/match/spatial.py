@@ -83,8 +83,12 @@ class SpatialEngine:
         self.heatmaps, self.last_seen = {}, {}
 
     def update(self, rows, time_s):
-        eligible = [r for r in rows if r.get('position_valid') and r['role'] == 'player'
-                    and r['team'] in {'team_a', 'team_b'}]
+        eligible = [
+            r for r in rows
+            if r.get("position_valid")
+            and r["role"] in {"player", "goalkeeper"}
+            and r["team"] in {"team_a", "team_b"}
+        ]
         for row in rows:
             key = f"{row['segment_id']}:{row['track_id']}"
             previous = self.last_seen.pop(key, None)

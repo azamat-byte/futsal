@@ -13,23 +13,23 @@
   "max_error_px": 8.0,
   "anchors": [
     {
-      "frame_index": 150,
+      "frame_index": 0,
       "image_points": [
         [
-          895.0,
-          445.0
+          946.0346640495582,
+          503.06423332956314
         ],
         [
-          337.0,
-          1009.0
+          365.7293645322064,
+          996.3421481001018
         ],
         [
-          1458.0,
-          1003.0
+          1380.4396199979485,
+          999.7496474015027
         ],
         [
-          896.5,
-          574.0
+          930.227482192524,
+          610.8962148774043
         ]
       ],
       "pitch_points": [
@@ -52,12 +52,1916 @@
       ],
       "check_image_points": [
         [
-          900.0,
-          1006.0
+          873.4746889331319,
+          998.047208070538
         ],
         [
-          898.0,
-          728.0
+          910.4831183539949,
+          745.5865028975137
+        ]
+      ],
+      "check_pitch_points": [
+        [
+          20.0,
+          20.0
+        ],
+        [
+          20.0,
+          13.0
+        ]
+      ],
+      "landmark_names": [
+        "Halfway / far touchline",
+        "Near substitution mark, x=15",
+        "Near substitution mark, x=25",
+        "Circle / halfway, far",
+        "Halfway / near touchline",
+        "Circle / halfway, near"
+      ],
+      "reviewed": true
+    },
+    {
+      "frame_index": 10,
+      "image_points": [
+        [
+          945.9309987334095,
+          498.87455167034415
+        ],
+        [
+          359.9824096514593,
+          995.2585616624721
+        ],
+        [
+          1384.3415102120998,
+          998.9387479793745
+        ],
+        [
+          929.9741222078467,
+          607.3001791675241
+        ]
+      ],
+      "pitch_points": [
+        [
+          20.0,
+          0.0
+        ],
+        [
+          15.0,
+          20.0
+        ],
+        [
+          25.0,
+          20.0
+        ],
+        [
+          20.0,
+          7.0
+        ]
+      ],
+      "check_image_points": [
+        [
+          872.6076873343399,
+          997.1002561733075
+        ],
+        [
+          910.0297999838008,
+          742.820163212263
+        ]
+      ],
+      "check_pitch_points": [
+        [
+          20.0,
+          20.0
+        ],
+        [
+          20.0,
+          13.0
+        ]
+      ],
+      "landmark_names": [
+        "Halfway / far touchline",
+        "Near substitution mark, x=15",
+        "Near substitution mark, x=25",
+        "Circle / halfway, far",
+        "Halfway / near touchline",
+        "Circle / halfway, near"
+      ],
+      "reviewed": true
+    },
+    {
+      "frame_index": 20,
+      "image_points": [
+        [
+          945.8886777178111,
+          494.47112596066245
+        ],
+        [
+          356.84839347550945,
+          993.7975592612507
+        ],
+        [
+          1387.508828974727,
+          997.546253321384
+        ],
+        [
+          929.938524417181,
+          603.6548253477137
+        ]
+      ],
+      "pitch_points": [
+        [
+          20.0,
+          0.0
+        ],
+        [
+          15.0,
+          20.0
+        ],
+        [
+          25.0,
+          20.0
+        ],
+        [
+          20.0,
+          7.0
+        ]
+      ],
+      "check_image_points": [
+        [
+          872.6702591463801,
+          995.6736945016518
+        ],
+        [
+          910.0152104012695,
+          740.0360304249804
+        ]
+      ],
+      "check_pitch_points": [
+        [
+          20.0,
+          20.0
+        ],
+        [
+          20.0,
+          13.0
+        ]
+      ],
+      "landmark_names": [
+        "Halfway / far touchline",
+        "Near substitution mark, x=15",
+        "Near substitution mark, x=25",
+        "Circle / halfway, far",
+        "Halfway / near touchline",
+        "Circle / halfway, near"
+      ],
+      "reviewed": true
+    },
+    {
+      "frame_index": 30,
+      "image_points": [
+        [
+          945.3302635512573,
+          489.66082208502155
+        ],
+        [
+          351.95748251738286,
+          991.9512021709106
+        ],
+        [
+          1390.554476988405,
+          996.0687371170939
+        ],
+        [
+          929.2348025136052,
+          599.5739522578574
+        ]
+      ],
+      "pitch_points": [
+        [
+          20.0,
+          0.0
+        ],
+        [
+          15.0,
+          20.0
+        ],
+        [
+          25.0,
+          20.0
+        ],
+        [
+          20.0,
+          7.0
+        ]
+      ],
+      "check_image_points": [
+        [
+          871.4742468140194,
+          994.0108349673726
+        ],
+        [
+          909.1350025089561,
+          736.8320232873805
+        ]
+      ],
+      "check_pitch_points": [
+        [
+          20.0,
+          20.0
+        ],
+        [
+          20.0,
+          13.0
+        ]
+      ],
+      "landmark_names": [
+        "Halfway / far touchline",
+        "Near substitution mark, x=15",
+        "Near substitution mark, x=25",
+        "Circle / halfway, far",
+        "Halfway / near touchline",
+        "Circle / halfway, near"
+      ],
+      "reviewed": true
+    },
+    {
+      "frame_index": 40,
+      "image_points": [
+        [
+          944.8712344366412,
+          485.24347395942004
+        ],
+        [
+          344.731882214934,
+          992.5784160171739
+        ],
+        [
+          1396.2629667158933,
+          997.1268678570186
+        ],
+        [
+          928.6665362790674,
+          596.341035954231
+        ]
+      ],
+      "pitch_points": [
+        [
+          20.0,
+          0.0
+        ],
+        [
+          15.0,
+          20.0
+        ],
+        [
+          25.0,
+          20.0
+        ],
+        [
+          20.0,
+          7.0
+        ]
+      ],
+      "check_image_points": [
+        [
+          870.5395789806402,
+          994.852824278622
+        ],
+        [
+          908.4346907929184,
+          735.0482606313105
+        ]
+      ],
+      "check_pitch_points": [
+        [
+          20.0,
+          20.0
+        ],
+        [
+          20.0,
+          13.0
+        ]
+      ],
+      "landmark_names": [
+        "Halfway / far touchline",
+        "Near substitution mark, x=15",
+        "Near substitution mark, x=25",
+        "Circle / halfway, far",
+        "Halfway / near touchline",
+        "Circle / halfway, near"
+      ],
+      "reviewed": true
+    },
+    {
+      "frame_index": 50,
+      "image_points": [
+        [
+          944.1965553764603,
+          481.35416962915775
+        ],
+        [
+          336.3582024063339,
+          993.1505329480042
+        ],
+        [
+          1401.6634062990763,
+          998.8030510021122
+        ],
+        [
+          927.7244745669132,
+          593.5235611572286
+        ]
+      ],
+      "pitch_points": [
+        [
+          20.0,
+          0.0
+        ],
+        [
+          15.0,
+          20.0
+        ],
+        [
+          25.0,
+          20.0
+        ],
+        [
+          20.0,
+          7.0
+        ]
+      ],
+      "check_image_points": [
+        [
+          868.6244983055379,
+          995.9747422320382
+        ],
+        [
+          907.1564249539872,
+          733.5851378745994
+        ]
+      ],
+      "check_pitch_points": [
+        [
+          20.0,
+          20.0
+        ],
+        [
+          20.0,
+          13.0
+        ]
+      ],
+      "landmark_names": [
+        "Halfway / far touchline",
+        "Near substitution mark, x=15",
+        "Near substitution mark, x=25",
+        "Circle / halfway, far",
+        "Halfway / near touchline",
+        "Circle / halfway, near"
+      ],
+      "reviewed": true
+    },
+    {
+      "frame_index": 60,
+      "image_points": [
+        [
+          943.9389008472773,
+          477.50874767825934
+        ],
+        [
+          331.14118361275604,
+          994.3272972490923
+        ],
+        [
+          1407.7232018327397,
+          1000.7334428205982
+        ],
+        [
+          927.543544077077,
+          591.0736050233652
+        ]
+      ],
+      "pitch_points": [
+        [
+          20.0,
+          0.0
+        ],
+        [
+          15.0,
+          20.0
+        ],
+        [
+          25.0,
+          20.0
+        ],
+        [
+          20.0,
+          7.0
+        ]
+      ],
+      "check_image_points": [
+        [
+          868.8638751644377,
+          997.5269882906325
+        ],
+        [
+          907.0960665463673,
+          732.7060745932175
+        ]
+      ],
+      "check_pitch_points": [
+        [
+          20.0,
+          20.0
+        ],
+        [
+          20.0,
+          13.0
+        ]
+      ],
+      "landmark_names": [
+        "Halfway / far touchline",
+        "Near substitution mark, x=15",
+        "Near substitution mark, x=25",
+        "Circle / halfway, far",
+        "Halfway / near touchline",
+        "Circle / halfway, near"
+      ],
+      "reviewed": true
+    },
+    {
+      "frame_index": 70,
+      "image_points": [
+        [
+          943.2050128547709,
+          473.907696266091
+        ],
+        [
+          324.8961664835856,
+          995.2641495934844
+        ],
+        [
+          1410.3081393195087,
+          1003.4430121420604
+        ],
+        [
+          926.3928481576321,
+          588.9176687709257
+        ]
+      ],
+      "pitch_points": [
+        [
+          20.0,
+          0.0
+        ],
+        [
+          15.0,
+          20.0
+        ],
+        [
+          25.0,
+          20.0
+        ],
+        [
+          20.0,
+          7.0
+        ]
+      ],
+      "check_image_points": [
+        [
+          866.3966297345228,
+          999.3444969360222
+        ],
+        [
+          905.4555570668305,
+          732.1471288706491
+        ]
+      ],
+      "check_pitch_points": [
+        [
+          20.0,
+          20.0
+        ],
+        [
+          20.0,
+          13.0
+        ]
+      ],
+      "landmark_names": [
+        "Halfway / far touchline",
+        "Near substitution mark, x=15",
+        "Near substitution mark, x=25",
+        "Circle / halfway, far",
+        "Halfway / near touchline",
+        "Circle / halfway, near"
+      ],
+      "reviewed": true
+    },
+    {
+      "frame_index": 80,
+      "image_points": [
+        [
+          943.1000371969049,
+          470.4266847961215
+        ],
+        [
+          321.57803224335265,
+          996.9088789055357
+        ],
+        [
+          1414.6807505423114,
+          1006.0774741532376
+        ],
+        [
+          926.314497306437,
+          586.9768201719746
+        ]
+      ],
+      "pitch_points": [
+        [
+          20.0,
+          0.0
+        ],
+        [
+          15.0,
+          20.0
+        ],
+        [
+          25.0,
+          20.0
+        ],
+        [
+          20.0,
+          7.0
+        ]
+      ],
+      "check_image_points": [
+        [
+          866.6177154795737,
+          1001.4804970763375
+        ],
+        [
+          905.4454860841721,
+          731.8804752814814
+        ]
+      ],
+      "check_pitch_points": [
+        [
+          20.0,
+          20.0
+        ],
+        [
+          20.0,
+          13.0
+        ]
+      ],
+      "landmark_names": [
+        "Halfway / far touchline",
+        "Near substitution mark, x=15",
+        "Near substitution mark, x=25",
+        "Circle / halfway, far",
+        "Halfway / near touchline",
+        "Circle / halfway, near"
+      ],
+      "reviewed": true
+    },
+    {
+      "frame_index": 90,
+      "image_points": [
+        [
+          943.678393680086,
+          466.7129880201909
+        ],
+        [
+          318.3675170719456,
+          1001.4002155546304
+        ],
+        [
+          1424.0487025765306,
+          1009.4544190174868
+        ],
+        [
+          927.502445145538,
+          585.0110891938285
+        ]
+      ],
+      "pitch_points": [
+        [
+          20.0,
+          0.0
+        ],
+        [
+          15.0,
+          20.0
+        ],
+        [
+          25.0,
+          20.0
+        ],
+        [
+          20.0,
+          7.0
+        ]
+      ],
+      "check_image_points": [
+        [
+          870.0163927144824,
+          1005.4186363641094
+        ],
+        [
+          907.3986836361202,
+          732.0341096944443
+        ]
+      ],
+      "check_pitch_points": [
+        [
+          20.0,
+          20.0
+        ],
+        [
+          20.0,
+          13.0
+        ]
+      ],
+      "landmark_names": [
+        "Halfway / far touchline",
+        "Near substitution mark, x=15",
+        "Near substitution mark, x=25",
+        "Circle / halfway, far",
+        "Halfway / near touchline",
+        "Circle / halfway, near"
+      ],
+      "reviewed": true
+    },
+    {
+      "frame_index": 100,
+      "image_points": [
+        [
+          944.0252271637687,
+          463.40850393431737
+        ],
+        [
+          309.23632130540636,
+          1006.7406494055796
+        ],
+        [
+          1430.9373405695792,
+          1014.0209138950092
+        ],
+        [
+          927.6004821021003,
+          583.3087891975474
+        ]
+      ],
+      "pitch_points": [
+        [
+          20.0,
+          0.0
+        ],
+        [
+          15.0,
+          20.0
+        ],
+        [
+          25.0,
+          20.0
+        ],
+        [
+          20.0,
+          7.0
+        ]
+      ],
+      "check_image_points": [
+        [
+          869.0981758715446,
+          1010.3743649044368
+        ],
+        [
+          907.1647881347436,
+          732.4889151013821
+        ]
+      ],
+      "check_pitch_points": [
+        [
+          20.0,
+          20.0
+        ],
+        [
+          20.0,
+          13.0
+        ]
+      ],
+      "landmark_names": [
+        "Halfway / far touchline",
+        "Near substitution mark, x=15",
+        "Near substitution mark, x=25",
+        "Circle / halfway, far",
+        "Halfway / near touchline",
+        "Circle / halfway, near"
+      ],
+      "reviewed": true
+    },
+    {
+      "frame_index": 110,
+      "image_points": [
+        [
+          944.3233322006697,
+          460.95808603384995
+        ],
+        [
+          308.01726262015325,
+          1010.129019382963
+        ],
+        [
+          1432.6719808428168,
+          1017.3176198106672
+        ],
+        [
+          927.7857651799474,
+          582.8804248979858
+        ]
+      ],
+      "pitch_points": [
+        [
+          20.0,
+          0.0
+        ],
+        [
+          15.0,
+          20.0
+        ],
+        [
+          25.0,
+          20.0
+        ],
+        [
+          20.0,
+          7.0
+        ]
+      ],
+      "check_image_points": [
+        [
+          869.3470257194085,
+          1013.7169431338858
+        ],
+        [
+          907.2900007418397,
+          733.9843650344802
+        ]
+      ],
+      "check_pitch_points": [
+        [
+          20.0,
+          20.0
+        ],
+        [
+          20.0,
+          13.0
+        ]
+      ],
+      "landmark_names": [
+        "Halfway / far touchline",
+        "Near substitution mark, x=15",
+        "Near substitution mark, x=25",
+        "Circle / halfway, far",
+        "Halfway / near touchline",
+        "Circle / halfway, near"
+      ],
+      "reviewed": true
+    },
+    {
+      "frame_index": 120,
+      "image_points": [
+        [
+          944.1080343211366,
+          457.7928819346888
+        ],
+        [
+          311.4215163406871,
+          1012.4051353531115
+        ],
+        [
+          1440.0120505681136,
+          1022.1870215130957
+        ],
+        [
+          928.554068414704,
+          581.928362764635
+        ]
+      ],
+      "pitch_points": [
+        [
+          20.0,
+          0.0
+        ],
+        [
+          15.0,
+          20.0
+        ],
+        [
+          25.0,
+          20.0
+        ],
+        [
+          20.0,
+          7.0
+        ]
+      ],
+      "check_image_points": [
+        [
+          874.0050885048628,
+          1017.2812425784432
+        ],
+        [
+          909.349321101438,
+          735.2005607552421
+        ]
+      ],
+      "check_pitch_points": [
+        [
+          20.0,
+          20.0
+        ],
+        [
+          20.0,
+          13.0
+        ]
+      ],
+      "landmark_names": [
+        "Halfway / far touchline",
+        "Near substitution mark, x=15",
+        "Near substitution mark, x=25",
+        "Circle / halfway, far",
+        "Halfway / near touchline",
+        "Circle / halfway, near"
+      ],
+      "reviewed": true
+    },
+    {
+      "frame_index": 130,
+      "image_points": [
+        [
+          938.4567939560804,
+          455.1127560634447
+        ],
+        [
+          312.43143532942025,
+          1017.5390541330607
+        ],
+        [
+          1445.8760262408107,
+          1025.2166340541912
+        ],
+        [
+          925.0867351826402,
+          581.6174970722831
+        ]
+      ],
+      "pitch_points": [
+        [
+          20.0,
+          0.0
+        ],
+        [
+          15.0,
+          20.0
+        ],
+        [
+          25.0,
+          20.0
+        ],
+        [
+          20.0,
+          7.0
+        ]
+      ],
+      "check_image_points": [
+        [
+          878.60964377785,
+          1021.374158627644
+        ],
+        [
+          908.6508677246384,
+          737.1302880975902
+        ]
+      ],
+      "check_pitch_points": [
+        [
+          20.0,
+          20.0
+        ],
+        [
+          20.0,
+          13.0
+        ]
+      ],
+      "landmark_names": [
+        "Halfway / far touchline",
+        "Near substitution mark, x=15",
+        "Near substitution mark, x=25",
+        "Circle / halfway, far",
+        "Halfway / near touchline",
+        "Circle / halfway, near"
+      ],
+      "reviewed": true
+    },
+    {
+      "frame_index": 140,
+      "image_points": [
+        [
+          920.4077060279468,
+          449.98718186728894
+        ],
+        [
+          292.36857866341586,
+          1025.038519175169
+        ],
+        [
+          1450.5543538876302,
+          1027.2999088309691
+        ],
+        [
+          909.8226155125031,
+          578.0395969602572
+        ]
+      ],
+      "pitch_points": [
+        [
+          20.0,
+          0.0
+        ],
+        [
+          15.0,
+          20.0
+        ],
+        [
+          25.0,
+          20.0
+        ],
+        [
+          20.0,
+          7.0
+        ]
+      ],
+      "check_image_points": [
+        [
+          872.779036235056,
+          1026.1717865947385
+        ],
+        [
+          896.7668574593426,
+          735.9807451382032
+        ]
+      ],
+      "check_pitch_points": [
+        [
+          20.0,
+          20.0
+        ],
+        [
+          20.0,
+          13.0
+        ]
+      ],
+      "landmark_names": [
+        "Halfway / far touchline",
+        "Near substitution mark, x=15",
+        "Near substitution mark, x=25",
+        "Circle / halfway, far",
+        "Halfway / near touchline",
+        "Circle / halfway, near"
+      ],
+      "reviewed": true
+    },
+    {
+      "frame_index": 150,
+      "image_points": [
+        [
+          894.9999999999999,
+          444.9999999999996
+        ],
+        [
+          337.0,
+          1008.9999999999994
+        ],
+        [
+          1458.0,
+          1002.9999999999994
+        ],
+        [
+          896.4999999999999,
+          574.0000000000002
+        ]
+      ],
+      "pitch_points": [
+        [
+          20.0,
+          0.0
+        ],
+        [
+          15.0,
+          20.0
+        ],
+        [
+          25.0,
+          20.0
+        ],
+        [
+          20.0,
+          7.0
+        ]
+      ],
+      "check_image_points": [
+        [
+          901.5230054350069,
+          1005.9784674106951
+        ],
+        [
+          898.3096309774463,
+          729.6282640604342
+        ]
+      ],
+      "check_pitch_points": [
+        [
+          20.0,
+          20.0
+        ],
+        [
+          20.0,
+          13.0
+        ]
+      ],
+      "landmark_names": [
+        "Halfway / far touchline",
+        "Near substitution mark, x=15",
+        "Near substitution mark, x=25",
+        "Circle / halfway, far",
+        "Halfway / near touchline",
+        "Circle / halfway, near"
+      ],
+      "reviewed": true
+    },
+    {
+      "frame_index": 160,
+      "image_points": [
+        [
+          856.7947622580474,
+          442.4501881174603
+        ],
+        [
+          317.0472613289165,
+          1011.6099239090543
+        ],
+        [
+          1452.509552994464,
+          996.4584277881941
+        ],
+        [
+          864.6906515572451,
+          571.1029088565552
+        ]
+      ],
+      "pitch_points": [
+        [
+          20.0,
+          0.0
+        ],
+        [
+          15.0,
+          20.0
+        ],
+        [
+          25.0,
+          20.0
+        ],
+        [
+          20.0,
+          7.0
+        ]
+      ],
+      "check_image_points": [
+        [
+          891.2559263105732,
+          1003.9477404760205
+        ],
+        [
+          874.2391286214933,
+          726.6822877816298
+        ]
+      ],
+      "check_pitch_points": [
+        [
+          20.0,
+          20.0
+        ],
+        [
+          20.0,
+          13.0
+        ]
+      ],
+      "landmark_names": [
+        "Halfway / far touchline",
+        "Near substitution mark, x=15",
+        "Near substitution mark, x=25",
+        "Circle / halfway, far",
+        "Halfway / near touchline",
+        "Circle / halfway, near"
+      ],
+      "reviewed": true
+    },
+    {
+      "frame_index": 170,
+      "image_points": [
+        [
+          817.7645152174479,
+          441.5562407723628
+        ],
+        [
+          293.5262365495588,
+          1009.5183677130304
+        ],
+        [
+          1437.7968956231937,
+          987.3754562978712
+        ],
+        [
+          830.657608297662,
+          569.1480195829512
+        ]
+      ],
+      "pitch_points": [
+        [
+          20.0,
+          0.0
+        ],
+        [
+          15.0,
+          20.0
+        ],
+        [
+          25.0,
+          20.0
+        ],
+        [
+          20.0,
+          7.0
+        ]
+      ],
+      "check_image_points": [
+        [
+          874.0217247564931,
+          998.2851336260254
+        ],
+        [
+          846.2466480493722,
+          723.4192483327149
+        ]
+      ],
+      "check_pitch_points": [
+        [
+          20.0,
+          20.0
+        ],
+        [
+          20.0,
+          13.0
+        ]
+      ],
+      "landmark_names": [
+        "Halfway / far touchline",
+        "Near substitution mark, x=15",
+        "Near substitution mark, x=25",
+        "Circle / halfway, far",
+        "Halfway / near touchline",
+        "Circle / halfway, near"
+      ],
+      "reviewed": true
+    },
+    {
+      "frame_index": 180,
+      "image_points": [
+        [
+          780.7740171899453,
+          439.9591576875249
+        ],
+        [
+          313.31641549947193,
+          994.8292218037943
+        ],
+        [
+          1454.2357810094306,
+          963.1253251350781
+        ],
+        [
+          807.2610005833407,
+          564.4709473740259
+        ]
+      ],
+      "pitch_points": [
+        [
+          20.0,
+          0.0
+        ],
+        [
+          15.0,
+          20.0
+        ],
+        [
+          25.0,
+          20.0
+        ],
+        [
+          20.0,
+          7.0
+        ]
+      ],
+      "check_image_points": [
+        [
+          895.3690388336311,
+          978.6551285384975
+        ],
+        [
+          839.1075851945549,
+          714.1775102713938
+        ]
+      ],
+      "check_pitch_points": [
+        [
+          20.0,
+          20.0
+        ],
+        [
+          20.0,
+          13.0
+        ]
+      ],
+      "landmark_names": [
+        "Halfway / far touchline",
+        "Near substitution mark, x=15",
+        "Near substitution mark, x=25",
+        "Circle / halfway, far",
+        "Halfway / near touchline",
+        "Circle / halfway, near"
+      ],
+      "reviewed": true
+    },
+    {
+      "frame_index": 190,
+      "image_points": [
+        [
+          745.1152575775111,
+          437.65049993301017
+        ],
+        [
+          272.6393292110424,
+          1000.9440434160402
+        ],
+        [
+          1435.6129368994593,
+          961.1767055097216
+        ],
+        [
+          773.4798796661415,
+          562.3006973910093
+        ]
+      ],
+      "pitch_points": [
+        [
+          20.0,
+          0.0
+        ],
+        [
+          15.0,
+          20.0
+        ],
+        [
+          25.0,
+          20.0
+        ],
+        [
+          20.0,
+          7.0
+        ]
+      ],
+      "check_image_points": [
+        [
+          868.6571547334415,
+          980.5634929813234
+        ],
+        [
+          807.7348818254114,
+          712.8365575105337
+        ]
+      ],
+      "check_pitch_points": [
+        [
+          20.0,
+          20.0
+        ],
+        [
+          20.0,
+          13.0
+        ]
+      ],
+      "landmark_names": [
+        "Halfway / far touchline",
+        "Near substitution mark, x=15",
+        "Near substitution mark, x=25",
+        "Circle / halfway, far",
+        "Halfway / near touchline",
+        "Circle / halfway, near"
+      ],
+      "reviewed": true
+    },
+    {
+      "frame_index": 200,
+      "image_points": [
+        [
+          702.1717128570614,
+          433.43443582120744
+        ],
+        [
+          261.6099139766919,
+          999.2696723198447
+        ],
+        [
+          1429.3474695775765,
+          950.5214463460532
+        ],
+        [
+          739.3858857639082,
+          558.5445368616047
+        ]
+      ],
+      "pitch_points": [
+        [
+          20.0,
+          0.0
+        ],
+        [
+          15.0,
+          20.0
+        ],
+        [
+          25.0,
+          20.0
+        ],
+        [
+          20.0,
+          7.0
+        ]
+      ],
+      "check_image_points": [
+        [
+          863.0123523713202,
+          974.1636013303194
+        ],
+        [
+          784.0998753818048,
+          708.8682259844956
+        ]
+      ],
+      "check_pitch_points": [
+        [
+          20.0,
+          20.0
+        ],
+        [
+          20.0,
+          13.0
+        ]
+      ],
+      "landmark_names": [
+        "Halfway / far touchline",
+        "Near substitution mark, x=15",
+        "Near substitution mark, x=25",
+        "Circle / halfway, far",
+        "Halfway / near touchline",
+        "Circle / halfway, near"
+      ],
+      "reviewed": true
+    },
+    {
+      "frame_index": 210,
+      "image_points": [
+        [
+          633.5006817589358,
+          428.0820535337196
+        ],
+        [
+          170.91468811306905,
+          1013.9766916286608
+        ],
+        [
+          1383.718576696038,
+          946.9271696767534
+        ],
+        [
+          672.1253833071987,
+          554.4542090701457
+        ]
+      ],
+      "pitch_points": [
+        [
+          20.0,
+          0.0
+        ],
+        [
+          15.0,
+          20.0
+        ],
+        [
+          25.0,
+          20.0
+        ],
+        [
+          20.0,
+          7.0
+        ]
+      ],
+      "check_image_points": [
+        [
+          801.9127819398909,
+          979.0921394418388
+        ],
+        [
+          718.8044095665218,
+          707.1784743789967
+        ]
+      ],
+      "check_pitch_points": [
+        [
+          20.0,
+          20.0
+        ],
+        [
+          20.0,
+          13.0
+        ]
+      ],
+      "landmark_names": [
+        "Halfway / far touchline",
+        "Near substitution mark, x=15",
+        "Near substitution mark, x=25",
+        "Circle / halfway, far",
+        "Halfway / near touchline",
+        "Circle / halfway, near"
+      ],
+      "reviewed": true
+    },
+    {
+      "frame_index": 220,
+      "image_points": [
+        [
+          573.5754903395792,
+          423.28557336550796
+        ],
+        [
+          99.98641111346419,
+          1021.8661124777927
+        ],
+        [
+          1335.7385185010762,
+          942.183058989014
+        ],
+        [
+          613.2766311224157,
+          551.3043416712715
+        ]
+      ],
+      "pitch_points": [
+        [
+          20.0,
+          0.0
+        ],
+        [
+          15.0,
+          20.0
+        ],
+        [
+          25.0,
+          20.0
+        ],
+        [
+          20.0,
+          7.0
+        ]
+      ],
+      "check_image_points": [
+        [
+          746.2831329013896,
+          980.1919806321118
+        ],
+        [
+          661.1839584502048,
+          705.7844628061304
+        ]
+      ],
+      "check_pitch_points": [
+        [
+          20.0,
+          20.0
+        ],
+        [
+          20.0,
+          13.0
+        ]
+      ],
+      "landmark_names": [
+        "Halfway / far touchline",
+        "Near substitution mark, x=15",
+        "Near substitution mark, x=25",
+        "Circle / halfway, far",
+        "Halfway / near touchline",
+        "Circle / halfway, near"
+      ],
+      "reviewed": true
+    },
+    {
+      "frame_index": 230,
+      "image_points": [
+        [
+          517.7717971784408,
+          421.87996122610116
+        ],
+        [
+          49.77702562162858,
+          1023.8597253858748
+        ],
+        [
+          1284.7572174239535,
+          938.1066084032275
+        ],
+        [
+          559.2672905784548,
+          551.7446140812158
+        ]
+      ],
+      "pitch_points": [
+        [
+          20.0,
+          0.0
+        ],
+        [
+          15.0,
+          20.0
+        ],
+        [
+          25.0,
+          20.0
+        ],
+        [
+          20.0,
+          7.0
+        ]
+      ],
+      "check_image_points": [
+        [
+          695.7885524978423,
+          979.0027289708086
+        ],
+        [
+          608.879621074157,
+          707.0117900862956
+        ]
+      ],
+      "check_pitch_points": [
+        [
+          20.0,
+          20.0
+        ],
+        [
+          20.0,
+          13.0
+        ]
+      ],
+      "landmark_names": [
+        "Halfway / far touchline",
+        "Near substitution mark, x=15",
+        "Near substitution mark, x=25",
+        "Circle / halfway, far",
+        "Halfway / near touchline",
+        "Circle / halfway, near"
+      ],
+      "reviewed": true
+    },
+    {
+      "frame_index": 310,
+      "image_points": [
+        [
+          584.679264934236,
+          418.5102735957531
+        ],
+        [
+          108.05546354025128,
+          1030.9603839457004
+        ],
+        [
+          1415.6526053649684,
+          968.5301765476949
+        ],
+        [
+          630.3410063959591,
+          552.2984617277837
+        ]
+      ],
+      "pitch_points": [
+        [
+          20.0,
+          0.0
+        ],
+        [
+          15.0,
+          20.0
+        ],
+        [
+          25.0,
+          20.0
+        ],
+        [
+          20.0,
+          7.0
+        ]
+      ],
+      "check_image_points": [
+        [
+          782.7141303783154,
+          998.749331209086
+        ],
+        [
+          685.3306796063067,
+          713.4173439533331
+        ]
+      ],
+      "check_pitch_points": [
+        [
+          20.0,
+          20.0
+        ],
+        [
+          20.0,
+          13.0
+        ]
+      ],
+      "landmark_names": [
+        "Halfway / far touchline",
+        "Near substitution mark, x=15",
+        "Near substitution mark, x=25",
+        "Circle / halfway, far",
+        "Halfway / near touchline",
+        "Circle / halfway, near"
+      ],
+      "reviewed": true
+    },
+    {
+      "frame_index": 320,
+      "image_points": [
+        [
+          728.3680446865133,
+          417.3279660984155
+        ],
+        [
+          249.18041992634141,
+          1018.743917827316
+        ],
+        [
+          1565.1364453947517,
+          987.9580709713978
+        ],
+        [
+          771.6390818799279,
+          551.0142217774796
+        ]
+      ],
+      "pitch_points": [
+        [
+          20.0,
+          0.0
+        ],
+        [
+          15.0,
+          20.0
+        ],
+        [
+          25.0,
+          20.0
+        ],
+        [
+          20.0,
+          7.0
+        ]
+      ],
+      "check_image_points": [
+        [
+          917.9678046121671,
+          1003.0981168995994
+        ],
+        [
+          824.1019730275158,
+          713.0987923014031
+        ]
+      ],
+      "check_pitch_points": [
+        [
+          20.0,
+          20.0
+        ],
+        [
+          20.0,
+          13.0
+        ]
+      ],
+      "landmark_names": [
+        "Halfway / far touchline",
+        "Near substitution mark, x=15",
+        "Near substitution mark, x=25",
+        "Circle / halfway, far",
+        "Halfway / near touchline",
+        "Circle / halfway, near"
+      ],
+      "reviewed": true
+    },
+    {
+      "frame_index": 330,
+      "image_points": [
+        [
+          858.3536812526069,
+          415.06391500449524
+        ],
+        [
+          373.4065778714134,
+          1007.996938274464
+        ],
+        [
+          1697.4090964827851,
+          1005.0459416205701
+        ],
+        [
+          899.4389633484008,
+          550.0280394191896
+        ]
+      ],
+      "pitch_points": [
+        [
+          20.0,
+          0.0
+        ],
+        [
+          15.0,
+          20.0
+        ],
+        [
+          25.0,
+          20.0
+        ],
+        [
+          20.0,
+          7.0
+        ]
+      ],
+      "check_image_points": [
+        [
+          1038.4009736398154,
+          1006.5147687096895
+        ],
+        [
+          949.2562807551673,
+          713.67668150023
+        ]
+      ],
+      "check_pitch_points": [
+        [
+          20.0,
+          20.0
+        ],
+        [
+          20.0,
+          13.0
+        ]
+      ],
+      "landmark_names": [
+        "Halfway / far touchline",
+        "Near substitution mark, x=15",
+        "Near substitution mark, x=25",
+        "Circle / halfway, far",
+        "Halfway / near touchline",
+        "Circle / halfway, near"
+      ],
+      "reviewed": true
+    },
+    {
+      "frame_index": 340,
+      "image_points": [
+        [
+          925.9579081212456,
+          412.3880360806244
+        ],
+        [
+          439.3418472780321,
+          1004.4990705059557
+        ],
+        [
+          1774.6419011131516,
+          1017.6982782914678
+        ],
+        [
+          966.8110264633053,
+          548.6761865501543
+        ]
+      ],
+      "pitch_points": [
+        [
+          20.0,
+          0.0
+        ],
+        [
+          15.0,
+          20.0
+        ],
+        [
+          25.0,
+          20.0
+        ],
+        [
+          20.0,
+          7.0
+        ]
+      ],
+      "check_image_points": [
+        [
+          1105.4200383763027,
+          1011.0831370762022
+        ],
+        [
+          1016.4249518453364,
+          714.1908498675165
+        ]
+      ],
+      "check_pitch_points": [
+        [
+          20.0,
+          20.0
+        ],
+        [
+          20.0,
+          13.0
+        ]
+      ],
+      "landmark_names": [
+        "Halfway / far touchline",
+        "Near substitution mark, x=15",
+        "Near substitution mark, x=25",
+        "Circle / halfway, far",
+        "Halfway / near touchline",
+        "Circle / halfway, near"
+      ],
+      "reviewed": true
+    },
+    {
+      "frame_index": 350,
+      "image_points": [
+        [
+          982.4993904920725,
+          411.2352878803945
+        ],
+        [
+          497.19480605963764,
+          998.8045899250819
+        ],
+        [
+          1839.466857427196,
+          1019.8361704064181
+        ],
+        [
+          1024.6943371706793,
+          548.5427963410947
+        ]
+      ],
+      "pitch_points": [
+        [
+          20.0,
+          0.0
+        ],
+        [
+          15.0,
+          20.0
+        ],
+        [
+          25.0,
+          20.0
+        ],
+        [
+          20.0,
+          7.0
+        ]
+      ],
+      "check_image_points": [
+        [
+          1166.282598689668,
+          1009.2882871349291
+        ],
+        [
+          1075.6523851370669,
+          714.3665063597402
         ]
       ],
       "check_pitch_points": [

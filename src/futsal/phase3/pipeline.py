@@ -76,16 +76,22 @@ class SpeedTrackingAnnotator(TrackingAnnotator):
         if len(tracks):
             roles = tracks.data["role"]
             teams = [r["team"] for r in rows]
-            groups = [role if role in {"goalkeeper", "referee"} else team for role, team in zip(roles, teams)]
+            groups = [
+                team if (role == "goalkeeper" and team in {"team_a", "team_b"})
+                else (role if role in {"goalkeeper", "referee"} else team)
+                for role, team in zip(roles, teams)
+            ]
             color_indices = np.array([GROUPS.index(group) for group in groups], dtype=int)
             names = {
                 "team_a": "Team A", "team_b": "Team B", "goalkeeper": "GK",
                 "referee": "Ref", "other": "Other", "unknown": "Unknown",
             }
             labels = []
-            for row, group in zip(rows, groups):
-                base = f"#{int(row['track_id'])} {names[group]}"
-                speed = row.get("speed_kmh")
+            for row, role, group in zip(rows, roles, groups):
+                prefix = "GK " if role == "goalkeeper" else ""
+                base = f"#{int(row['track_id'])} {prefix}{names[group]}"
+                raw_speed = row.get("speed_kmh")
+                speed = float(raw_speed) if raw_speed not in ("", None) else None
                 if speed is not None and np.isfinite(speed):
                     base += f" | {speed:.1f} km/h"
                 labels.append(base)

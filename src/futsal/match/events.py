@@ -59,7 +59,7 @@ class PossessionEngine:
             distances.sort()
             if distances:
                 state = 'free_ball'
-                if distances[0][0] <= .35:
+                if distances[0][0] <= .65:
                     if len(distances) > 1 and distances[1][0]-distances[0][0] < .10:
                         state = 'contested'
                     else:

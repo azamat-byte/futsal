@@ -22,8 +22,55 @@ EXTRA_COLUMNS = ["pitch_x_m", "pitch_y_m", "position_valid", "position_status", 
                  "calibration_valid", "calibration_status", "anchor_frame", "flow_inlier_ratio"]
 
 
+def stabilize_teams_and_goalkeepers(rows_by_frame: list[tuple[int, list[dict]]]) -> list[tuple[int, list[dict]]]:
+    """Lock each player's majority team and cluster goalkeepers to their defending side's team."""
+    from collections import Counter
+
+    votes: dict[tuple[int, int], Counter] = {}
+    gk_xs: dict[tuple[int, int], list[float]] = {}
+    team_xs: dict[tuple[int, str], list[float]] = {}
+
+    for _, group in rows_by_frame:
+        for r in group:
+            seg = int(r["segment_id"])
+            tid = int(r["track_id"])
+            role = r["role"]
+            team = r["team"]
+            if role == "player" and team in {"team_a", "team_b"}:
+                votes.setdefault((seg, tid), Counter())[team] += 1
+                team_xs.setdefault((seg, team), []).append(float(r["foot_x_px"]))
+            elif role == "goalkeeper":
+                gk_xs.setdefault((seg, tid), []).append(float(r["foot_x_px"]))
+
+    locked_team: dict[tuple[int, int], str] = {}
+    for key, counter in votes.items():
+        winner, count = counter.most_common(1)[0]
+        if count >= 3:
+            locked_team[key] = winner
+
+    # Assign goalkeepers to whichever team defends their half of the court (left vs right)
+    for (seg, tid), xs in gk_xs.items():
+        if (seg, tid) in locked_team:
+            continue
+        mean_gk_x = float(np.mean(xs))
+        mean_a = float(np.mean(team_xs.get((seg, "team_a"), [960.0])))
+        mean_b = float(np.mean(team_xs.get((seg, "team_b"), [960.0])))
+        left_team = "team_a" if mean_a <= mean_b else "team_b"
+        right_team = "team_b" if left_team == "team_a" else "team_a"
+        locked_team[(seg, tid)] = left_team if mean_gk_x < 960.0 else right_team
+
+    for _, group in rows_by_frame:
+        for r in group:
+            key = (int(r["segment_id"]), int(r["track_id"]))
+            if key in locked_team:
+                r["team"] = locked_team[key]
+                r["team_vote_fraction"] = max(float(r.get("team_vote_fraction", 0.0)), 0.95)
+    return rows_by_frame
+
+
 def track_groups(path):
-    """Bound memory to one frame; preserve absolute indices and reject unordered input."""
+    """Read and stabilize Phase 1 observations, locking player teams and clustering goalkeepers."""
+    raw_groups = []
     with path.open(newline="", encoding="utf-8") as stream:
         reader = csv.DictReader(stream)
         if not set(TRACK_COLUMNS) <= set(reader.fieldnames or []):
@@ -46,7 +93,8 @@ def track_groups(path):
                 group.append(converted)
             if len({r["track_id"] for r in group}) != len(group):
                 raise ValueError("Duplicate track identity in a source frame")
-            yield index, group
+            raw_groups.append((index, group))
+    return iter(stabilize_teams_and_goalkeepers(raw_groups))
 
 
 class Phase2Pipeline:
@@ -182,5 +230,6 @@ class Phase2Pipeline:
                     if check.info.frame_count != count or not next(check.frames(limit=1), None):
                         raise OSError(f"Video verification failed: {name}")
         finally:
-            groups.close()
+            if hasattr(groups, "close"):
+                groups.close()
         return frames, valid, observations, projected_count

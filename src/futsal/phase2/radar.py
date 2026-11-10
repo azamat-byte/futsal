@@ -40,7 +40,11 @@ class PitchRadar:
             if not row.get("position_valid", False):
                 continue
             role, team = row["role"], row["team"]
-            color = COLORS.get(role if role in {"goalkeeper", "referee"} else team, COLORS["unknown"])
+            group = (
+                team if (role == "goalkeeper" and team in {"team_a", "team_b"})
+                else (role if role in {"goalkeeper", "referee"} else team)
+            )
+            color = COLORS.get(group, COLORS["unknown"])
             p = self.point(row["pitch_x_m"], row["pitch_y_m"])
             cv2.circle(canvas, p, 5, (15, 20, 20), -1, cv2.LINE_AA)
             cv2.circle(canvas, p, 4, color, -1, cv2.LINE_AA)

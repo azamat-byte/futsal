@@ -136,13 +136,14 @@ class BroadcastCompositor:
             segment_id=segment_id,
         )
 
-        # Draw top-right broadcast telemetry bar (Pitch Control % & Ball Possession %)
+        # Draw top-center broadcast telemetry bar (avoids TV channel logo in top-right)
         h, w = scene.shape[:2]
-        hud_w = min(w - 10, 410)
+        hud_w = min(w - 20, 420)
         if hud_w > 200:
-            x0 = w - hud_w - 10
-            cv2.rectangle(scene, (x0, 8), (w - 10, 62), (20, 25, 30), -1)
-            cv2.rectangle(scene, (x0, 8), (w - 10, 62), (65, 85, 105), 1)
+            x0 = max(10, (w - hud_w) // 2)
+            x1 = min(w - 10, x0 + hud_w)
+            cv2.rectangle(scene, (x0, 4), (x1, 56), (20, 25, 30), -1)
+            cv2.rectangle(scene, (x0, 4), (x1, 56), (65, 85, 105), 1)
             ctrl_txt = (
                 f"Pitch Control  A: {team_a_control_pct:4.1f}% | B: {100.0 - team_a_control_pct:4.1f}%"
                 if team_a_control_pct is not None
@@ -153,8 +154,8 @@ class BroadcastCompositor:
                 if team_a_possession_pct is not None
                 else "Possession     -- / --"
             )
-            cv2.putText(scene, ctrl_txt, (x0 + 12, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.48, (0, 215, 255), 1, cv2.LINE_AA)
-            cv2.putText(scene, poss_txt, (x0 + 12, 52), cv2.FONT_HERSHEY_SIMPLEX, 0.48, (120, 255, 180), 1, cv2.LINE_AA)
+            cv2.putText(scene, ctrl_txt, (x0 + 12, 24), cv2.FONT_HERSHEY_SIMPLEX, 0.48, (0, 215, 255), 1, cv2.LINE_AA)
+            cv2.putText(scene, poss_txt, (x0 + 12, 46), cv2.FONT_HERSHEY_SIMPLEX, 0.48, (120, 255, 180), 1, cv2.LINE_AA)
 
         # Alpha-blend the 2D radar mini-map in the bottom-right corner
         ratio = min(0.34 * w / radar_img.shape[1], 0.36 * h / radar_img.shape[0], 1.0)

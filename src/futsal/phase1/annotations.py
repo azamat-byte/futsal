@@ -11,21 +11,32 @@ COLORS = ("#00BFFF", "#FF4081", "#B388FF", "#FFD740", "#FF9100", "#B0BEC5")
 class TrackingAnnotator:
     def __init__(self) -> None:
         palette = sv.ColorPalette.from_hex(list(COLORS))
-        self.boxes = sv.BoxAnnotator(color=palette, thickness=2)
-        self.labels = sv.LabelAnnotator(color=palette, text_color=sv.Color.BLACK, text_scale=.5,
-                                        text_padding=4)
+        self.boxes = sv.EllipseAnnotator(color=palette, thickness=2)
+        self.labels = sv.LabelAnnotator(
+            color=palette,
+            text_color=sv.Color.BLACK,
+            text_scale=0.5,
+            text_padding=4,
+            text_position=sv.Position.BOTTOM_CENTER,
+        )
 
     def annotate(self, frame: np.ndarray, tracks: sv.Detections, teams: list[str],
                  frame_index: int, segment_id: int) -> np.ndarray:
         scene = frame.copy()
         if len(tracks):
             roles = tracks.data["role"]
-            groups = [role if role in {"goalkeeper", "referee"} else team for role, team in zip(roles, teams)]
+            groups = [
+                team if (role == "goalkeeper" and team in {"team_a", "team_b"})
+                else (role if role in {"goalkeeper", "referee"} else team)
+                for role, team in zip(roles, teams)
+            ]
             color_indices = np.array([GROUPS.index(group) for group in groups], dtype=int)
             names = {"team_a": "Team A", "team_b": "Team B", "goalkeeper": "GK",
                      "referee": "Ref", "other": "Other", "unknown": "Unknown"}
-            labels = [f"#{int(track_id)} {names[group]}"
-                      for track_id, group in zip(tracks.tracker_id, groups)]
+            labels = []
+            for track_id, role, group in zip(tracks.tracker_id, roles, groups):
+                prefix = "GK " if role == "goalkeeper" else ""
+                labels.append(f"#{int(track_id)} {prefix}{names[group]}")
             scene = self.boxes.annotate(scene, tracks, custom_color_lookup=color_indices)
             # Move only display label anchors to keep text inside the image; raw
             # measurement boxes and box annotations retain their source geometry.
