@@ -21,7 +21,8 @@ class TrackingAnnotator:
         )
 
     def annotate(self, frame: np.ndarray, tracks: sv.Detections, teams: list[str],
-                 frame_index: int, segment_id: int) -> np.ndarray:
+                 frame_index: int, segment_id: int,
+                 player_names: dict[int, str] | None = None) -> np.ndarray:
         scene = frame.copy()
         if len(tracks):
             roles = tracks.data["role"]
@@ -35,8 +36,12 @@ class TrackingAnnotator:
                      "referee": "Ref", "other": "Other", "unknown": "Unknown"}
             labels = []
             for track_id, role, group in zip(tracks.tracker_id, roles, groups):
-                prefix = "GK " if role == "goalkeeper" else ""
-                labels.append(f"#{int(track_id)} {prefix}{names[group]}")
+                tid = int(track_id)
+                if player_names and tid in player_names and player_names[tid]:
+                    labels.append(player_names[tid])
+                else:
+                    prefix = "GK " if role == "goalkeeper" else ""
+                    labels.append(f"#{tid} {prefix}{names[group]}")
             scene = self.boxes.annotate(scene, tracks, custom_color_lookup=color_indices)
             # Move only display label anchors to keep text inside the image; raw
             # measurement boxes and box annotations retain their source geometry.

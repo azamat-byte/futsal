@@ -91,8 +91,12 @@ class SpeedTrackingAnnotator(TrackingAnnotator):
             }
             labels = []
             for row, role, group in zip(rows, roles, groups):
-                prefix = "GK " if role == "goalkeeper" else ""
-                base = f"#{int(row['track_id'])} {prefix}{names[group]}"
+                resolved_name = row.get("player_name")
+                if resolved_name not in ("", None):
+                    base = str(resolved_name)
+                else:
+                    prefix = "GK " if role == "goalkeeper" else ""
+                    base = f"#{int(row['track_id'])} {prefix}{names[group]}"
                 raw_speed = row.get("speed_kmh")
                 speed = float(raw_speed) if raw_speed not in ("", None) else None
                 if speed is not None and np.isfinite(speed):
