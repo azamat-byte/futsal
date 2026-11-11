@@ -80,7 +80,7 @@ def test_player_identity_ellipse_annotator_displays_player_name():
 
     assert out.shape == frame.shape
     assert not np.array_equal(out, frame)
-    # After 3 frames of voting "11" on Team A, tracker_id=42 resolves to Ferrão (#11)
+    # After 3 frames of voting "11" on Team A, tracker_id=42 resolves to Ferrao (#11)
     assert voter.get_jersey_number(42) == 11
-    assert voter.resolve_player_name(42, "team_a") == "Ferrão"
-    assert voter.format_label(42, "team_a", speed_kmh=14.2) == "#11 Ferrão | 14.2 km/h"
+    assert voter.resolve_player_name(42, "team_a") == "Ferrao"
+    assert voter.format_label(42, "team_a", speed_kmh=14.2) == "#11 Ferrao | 14.2 km/h"
