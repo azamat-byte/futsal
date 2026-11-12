@@ -37,29 +37,44 @@ class PersonTracker:
     def __init__(self, config: TrackingConfig, fps: float) -> None:
         self.config = config
         try:
-            from supervision import ByteTrack
-        except ImportError:
-            from supervision.tracker.byte_tracker.core import ByteTrack
+            import supervision as sv
+            ByteTrack = sv.ByteTrack
+        except (ImportError, AttributeError):
+            try:
+                from supervision.tracker.byte_tracker.core import ByteTrack
+            except (ImportError, ModuleNotFoundError):
+                # Fallback to Ultralytics ByteTrack if supervision >= 0.31 has removed it
+                from futsal.tracking import PersonTracker as UltralyticsPersonTracker
+                self._fallback_ultralytics = UltralyticsPersonTracker(fps=fps, mode="bytetrack")
+                ByteTrack = None
 
-        self.tracker = ByteTrack(
-            track_activation_threshold=config.activation_threshold,
-            # Supervision scales this 30-fps reference buffer by the actual FPS.
-            lost_track_buffer=max(1, round(config.lost_seconds * 30)),
-            minimum_matching_threshold=config.matching_threshold,
-            frame_rate=max(1, round(fps)),
-            minimum_consecutive_frames=config.minimum_consecutive_frames,
-        )
+        if ByteTrack is not None:
+            self.tracker = ByteTrack(
+                track_activation_threshold=config.activation_threshold,
+                # Supervision scales this 30-fps reference buffer by the actual FPS.
+                lost_track_buffer=max(1, round(config.lost_seconds * 30)),
+                minimum_matching_threshold=config.matching_threshold,
+                frame_rate=max(1, round(fps)),
+                minimum_consecutive_frames=config.minimum_consecutive_frames,
+            )
+            self._fallback_ultralytics = None
         self.segment_id = 0
         self.offset = 0
         self.max_id = 0
 
     def reset_segment(self) -> None:
-        self.tracker.reset()
+        if self._fallback_ultralytics is not None:
+            self._fallback_ultralytics.reset()
+        elif hasattr(self, "tracker") and self.tracker is not None:
+            self.tracker.reset()
         self.offset = self.max_id
         self.segment_id += 1
 
     def update(self, people: sv.Detections) -> sv.Detections:
-        tracked = self.tracker.update_with_detections(people)
+        if self._fallback_ultralytics is not None:
+            tracked = self._fallback_ultralytics.update(people)
+        else:
+            tracked = self.tracker.update_with_detections(people)
         if len(tracked):
             tracked.tracker_id = tracked.tracker_id + self.offset
             self.max_id = max(self.max_id, int(tracked.tracker_id.max()))
