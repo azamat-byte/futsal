@@ -55,7 +55,8 @@ def run_full_pipeline(
     p5_dir = output_dir / "p5"
 
     with VideoReader(video_path) as reader:
-        total_frames = reader.info.total_frames
+        assert reader.info is not None
+        total_frames = reader.info.frame_count
         fps = reader.info.fps
 
     frames_to_process = min(total_frames, max_frames) if max_frames else total_frames
