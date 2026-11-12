@@ -19,6 +19,7 @@ def main(argv=None):
     calibrate.add_argument("--frame", type=int, default=0)
     auto = commands.add_parser(
         "auto-calibrate",
+        aliases=["auto"],
         help="Automatically calibrate pitch homography using Roboflow keypoint model",
     )
     auto.add_argument("--video", type=Path, required=True)
@@ -45,7 +46,7 @@ def main(argv=None):
             if output is None:
                 logging.info("Closed without saving a calibration")
                 return 0
-        elif args.command == "auto-calibrate":
+        elif args.command in ("auto-calibrate", "auto"):
             kp_model = RoboflowKeypointModel(
                 api_key=os.environ.get("ROBOFLOW_API_KEY", ""),
                 model_id=args.model_id,
