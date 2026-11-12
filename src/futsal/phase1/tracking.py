@@ -36,7 +36,12 @@ class PersonTracker:
 
     def __init__(self, config: TrackingConfig, fps: float) -> None:
         self.config = config
-        self.tracker = sv.ByteTrack(
+        try:
+            from supervision import ByteTrack
+        except ImportError:
+            from supervision.tracker.byte_tracker.core import ByteTrack
+
+        self.tracker = ByteTrack(
             track_activation_threshold=config.activation_threshold,
             # Supervision scales this 30-fps reference buffer by the actual FPS.
             lost_track_buffer=max(1, round(config.lost_seconds * 30)),
