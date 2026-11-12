@@ -73,10 +73,11 @@ def load_homography_lookup(phase2_dir: Path) -> dict[int, np.ndarray | None]:
 class PossessionAnnotator(SpeedTrackingAnnotator):
     """Draws player boxes, ankle keypoints, active possession rings, ball trail, and recent events."""
 
-    def __init__(self, trail_length: int = 20) -> None:
+    def __init__(self, trail_length: int = 20, show_ankles: bool = False) -> None:
         super().__init__()
         self.ball_trail: deque[tuple[int, int]] = deque(maxlen=trail_length)
         self.recent_event: tuple[int, str] | None = None
+        self.show_ankles = show_ankles
 
     def reset_trail(self) -> None:
         self.ball_trail.clear()
@@ -105,15 +106,24 @@ class PossessionAnnotator(SpeedTrackingAnnotator):
                     # Draw ground ring BEFORE annotate_with_metrics so LabelAnnotator draws the text pill on top
                     cv2.ellipse(base_frame, (cx, cy), (rx, ry), 0, -45, 235, (0, 255, 180), 3, cv2.LINE_AA)
 
-        scene = self.annotate_with_metrics(base_frame, tracks, rows, frame_index, segment_id)
+        scene = self.annotate_with_metrics(
+            base_frame,
+            tracks,
+            rows,
+            frame_index,
+            segment_id,
+            active_owner_id=int(owner_id) if owner_id is not None else None,
+            show_debug_header=False,
+        )
 
-        # 1. Draw detected ankle keypoints and overhead EA FC pointer triangle for the player in possession
+        # 1. Draw overhead EA FC pointer triangle for the player in possession (and optional ankle debug dots)
         for row in rows:
             tid = int(row["track_id"])
-            for ax, ay in feet.get(tid, []):
-                pt = (round(ax), round(ay))
-                cv2.circle(scene, pt, 4, (0, 255, 255), -1, cv2.LINE_AA)
-                cv2.circle(scene, pt, 5, (20, 20, 20), 1, cv2.LINE_AA)
+            if self.show_ankles:
+                for ax, ay in feet.get(tid, []):
+                    pt = (round(ax), round(ay))
+                    cv2.circle(scene, pt, 4, (0, 255, 255), -1, cv2.LINE_AA)
+                    cv2.circle(scene, pt, 5, (20, 20, 20), 1, cv2.LINE_AA)
             if owner_id is not None and tid == int(owner_id):
                 cx = round((row["x1"] + row["x2"]) / 2)
                 ty = max(16, round(row["y1"]) - 8)
@@ -136,29 +146,40 @@ class PossessionAnnotator(SpeedTrackingAnnotator):
         else:
             self.ball_trail.clear()
 
-        # 3. Possession & Event banner
+        # 3. Clean Broadcast Possession & Event pill
+        team_names = {"team_a": "Team A", "team_b": "Team B"}
+        jersey_lookup = {
+            int(r["track_id"]): int(float(r["jersey_number"]))
+            for r in rows
+            if r.get("jersey_number") not in ("", None) and pd.notna(r.get("jersey_number"))
+        }
         if emitted_events:
             ev = emitted_events[-1]
-            label = f"EVENT: {ev['type'].upper()} (#{ev['source_id']}"
+            src_disp = jersey_lookup.get(int(ev["source_id"]), int(ev["source_id"]))
+            tm_disp = team_names.get(str(ev["team"]), str(ev["team"]))
+            label = f"{ev['type'].upper()}: #{src_disp}"
             if ev.get("receiver_id") is not None:
-                label += f" -> #{ev['receiver_id']}"
-            label += f", {ev['team']})"
+                rcv_disp = jersey_lookup.get(int(ev["receiver_id"]), int(ev["receiver_id"]))
+                label += f" -> #{rcv_disp}"
+            label += f" ({tm_disp})"
             self.recent_event = (frame_index, label)
 
-        status_text = f"Possession: {possession['state']}"
         if owner_id is not None:
-            status_text += f" | #{owner_id} ({possession.get('team')})"
-        cv2.rectangle(scene, (0, 30), (min(scene.shape[1] - 1, 520), 58), (32, 38, 42), -1)
-        cv2.putText(scene, status_text, (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.50, (0, 255, 180), 1, cv2.LINE_AA)
+            owner_disp = jersey_lookup.get(int(owner_id), int(owner_id))
+            tm_disp = team_names.get(str(possession.get("team")), str(possession.get("team")))
+            status_text = f"Ball Carrier: #{owner_disp} ({tm_disp})"
+            cv2.rectangle(scene, (12, 8), (280, 36), (24, 30, 34), -1)
+            cv2.rectangle(scene, (12, 8), (280, 36), (0, 255, 180), 1, cv2.LINE_AA)
+            cv2.putText(scene, status_text, (22, 27), cv2.FONT_HERSHEY_SIMPLEX, 0.48, (0, 255, 180), 1, cv2.LINE_AA)
 
         if self.recent_event is not None and 0 <= frame_index - self.recent_event[0] <= 45:
-            cv2.rectangle(scene, (0, 58), (min(scene.shape[1] - 1, 520), 86), (20, 75, 115), -1)
+            cv2.rectangle(scene, (12, 40), (280, 68), (20, 75, 115), -1)
             cv2.putText(
                 scene,
                 self.recent_event[1],
-                (10, 78),
+                (22, 59),
                 cv2.FONT_HERSHEY_SIMPLEX,
-                0.50,
+                0.48,
                 (255, 240, 150),
                 1,
                 cv2.LINE_AA,

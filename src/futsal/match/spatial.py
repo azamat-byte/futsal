@@ -15,14 +15,19 @@ class MovementEngine:
         self.states.clear()
 
     def update(self, row, time_s, anchor):
-        identity = (row['segment_id'], row['track_id'])
-        total = self.totals.setdefault(identity, dict(segment_id=identity[0], track_id=identity[1],
+        raw_j = row.get('jersey_number')
+        has_jersey = raw_j not in ('', None) and not (isinstance(raw_j, float) and np.isnan(raw_j))
+        canonical_id = int(float(raw_j)) if has_jersey else int(row['track_id'])
+        team_key = row.get('team') if has_jersey else 'raw'
+        identity = (row['segment_id'], team_key, canonical_id)
+        total = self.totals.setdefault(identity, dict(segment_id=row['segment_id'], track_id=canonical_id,
+                                                    jersey_number=canonical_id if has_jersey else None,
                                                     team=row['team'], observed_distance_m=0., valid_duration_s=0.,
                                                     max_speed_kmh=None))
         if row['team'] in {'team_a', 'team_b'}:
             total['team'] = row['team']
         empty = dict(speed_kmh=None, distance_step_m=None, observed_distance_m=total['observed_distance_m'])
-        if not row.get('position_valid'):
+        if not row.get('position_valid') or not row.get('is_active', True):
             self.states.pop(identity, None)
             return empty
         point = np.array([row['pitch_x_m'], row['pitch_y_m']], float)
@@ -86,13 +91,14 @@ class SpatialEngine:
         eligible = [
             r for r in rows
             if r.get("position_valid")
+            and r.get("is_active", True)
             and r["role"] in {"player", "goalkeeper"}
             and r["team"] in {"team_a", "team_b"}
         ]
         for row in rows:
             key = f"{row['segment_id']}:{row['track_id']}"
             previous = self.last_seen.pop(key, None)
-            if not row.get('position_valid'):
+            if not row.get('position_valid') or not row.get('is_active', True):
                 continue
             grid = self.heatmaps.setdefault(key, np.zeros((int(np.ceil(self.width/self.cell)),
                                                           int(np.ceil(self.length/self.cell))), np.float32))

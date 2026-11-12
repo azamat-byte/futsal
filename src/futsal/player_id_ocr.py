@@ -65,6 +65,7 @@ DEFAULT_ROSTER_MAP: dict[str, dict[int, str]] = {
         12: "Kiki Vaporaki",
         13: "Plaza",
         14: "Taborda",
+        18: "Matias Rosa",
     },
 }
 
@@ -127,6 +128,47 @@ def crop_upper_torso(
     if (cx2 - cx1) < 8 or (cy2 - cy1) < 12:
         return None
     return frame[cy1:cy2, cx1:cx2].copy()
+
+
+def crop_shorts_region(
+    frame: np.ndarray,
+    box_xyxy: np.ndarray | list[float] | tuple[float, float, float, float],
+    top_ratio: float = 0.52,
+    bottom_ratio: float = 0.78,
+    side_margin_ratio: float = 0.08,
+) -> np.ndarray | None:
+    """Crop the shorts/thigh region where futsal front-facing kit numbers are printed."""
+    return crop_upper_torso(
+        frame,
+        box_xyxy,
+        top_ratio=top_ratio,
+        bottom_ratio=bottom_ratio,
+        side_margin_ratio=side_margin_ratio,
+        min_width=16,
+        min_height=20,
+    )
+
+
+def compute_crop_quality(crop_bgr: np.ndarray | None) -> float:
+    """Score crop sharpness (Laplacian variance) and contrast for quality-gated VLM voting."""
+    if crop_bgr is None or crop_bgr.size == 0:
+        return 0.0
+    gray = cv2.cvtColor(crop_bgr, cv2.COLOR_BGR2GRAY)
+    sharpness = float(cv2.Laplacian(gray, cv2.CV_64F).var())
+    contrast = float(gray.std())
+    area = float(gray.shape[0] * gray.shape[1])
+    return sharpness * contrast * np.sqrt(area)
+
+
+def preprocess_for_ocr(crop_bgr: np.ndarray, scale: int = 3) -> np.ndarray:
+    """Upscale crop with bicubic interpolation and apply LAB CLAHE local contrast enhancement."""
+    h, w = crop_bgr.shape[:2]
+    upscaled = cv2.resize(crop_bgr, (w * scale, h * scale), interpolation=cv2.INTER_CUBIC)
+    lab = cv2.cvtColor(upscaled, cv2.COLOR_BGR2LAB)
+    l_chan, a_chan, b_chan = cv2.split(lab)
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(4, 4))
+    l_enhanced = clahe.apply(l_chan)
+    return cv2.cvtColor(cv2.merge((l_enhanced, a_chan, b_chan)), cv2.COLOR_LAB2BGR)
 
 
 class VLMJerseyOCR:

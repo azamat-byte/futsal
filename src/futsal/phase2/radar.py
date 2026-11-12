@@ -48,7 +48,9 @@ class PitchRadar:
             p = self.point(row["pitch_x_m"], row["pitch_y_m"])
             cv2.circle(canvas, p, 5, (15, 20, 20), -1, cv2.LINE_AA)
             cv2.circle(canvas, p, 4, color, -1, cv2.LINE_AA)
-            cv2.putText(canvas, str(row["track_id"]), (p[0]+6, p[1]-5), cv2.FONT_HERSHEY_SIMPLEX,
+            raw_j = row.get("jersey_number")
+            disp_id = str(int(float(raw_j))) if raw_j not in ("", None) and not (isinstance(raw_j, float) and np.isnan(raw_j)) else str(row["track_id"])
+            cv2.putText(canvas, disp_id, (p[0]+6, p[1]-5), cv2.FONT_HERSHEY_SIMPLEX,
                         .35, (255, 255, 255), 1, cv2.LINE_AA)
         title = f"RADAR | {self.length:g} x {self.width:g} m"
         if units == "assumed_m":

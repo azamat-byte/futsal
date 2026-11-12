@@ -74,6 +74,10 @@ class SpeedTrackingAnnotator(TrackingAnnotator):
         frame_index: int,
         segment_id: int,
         team_a_control_pct: float | None = None,
+        active_owner_id: int | None = None,
+        show_speed_always: bool = False,
+        sprint_speed_kmh: float = 18.0,
+        show_debug_header: bool = True,
     ) -> np.ndarray:
         scene = frame.copy()
         if len(tracks):
@@ -85,22 +89,24 @@ class SpeedTrackingAnnotator(TrackingAnnotator):
                 for role, team in zip(roles, teams)
             ]
             color_indices = np.array([GROUPS.index(group) for group in groups], dtype=int)
-            names = {
-                "team_a": "Team A", "team_b": "Team B", "goalkeeper": "GK",
-                "referee": "Ref", "other": "Other", "unknown": "Unknown",
-            }
             labels = []
             for row, role, group in zip(rows, roles, groups):
-                resolved_name = row.get("player_name")
-                if resolved_name not in ("", None):
-                    import unicodedata
-                    base = unicodedata.normalize("NFKD", str(resolved_name)).encode("ascii", "ignore").decode("ascii")
+                tid = int(row["track_id"])
+                raw_jersey = row.get("jersey_number")
+                if raw_jersey not in ("", None) and pd.notna(raw_jersey):
+                    base = f"#{int(float(raw_jersey))}"
                 else:
-                    prefix = "GK " if role == "goalkeeper" else ""
-                    base = f"#{int(row['track_id'])} {prefix}{names[group]}"
+                    base = f"#{tid}"
                 raw_speed = row.get("speed_kmh")
-                speed = float(raw_speed) if raw_speed not in ("", None) else None
-                if speed is not None and np.isfinite(speed):
+                speed = float(raw_speed) if raw_speed not in ("", None) and pd.notna(raw_speed) else None
+                show_pace = show_speed_always or (
+                    active_owner_id is not None
+                    and tid == int(active_owner_id)
+                    and speed is not None
+                    and np.isfinite(speed)
+                    and speed >= sprint_speed_kmh
+                )
+                if show_pace and speed is not None and np.isfinite(speed):
                     base += f" | {speed:.1f} km/h"
                 labels.append(base)
             scene = self.boxes.annotate(scene, tracks, custom_color_lookup=color_indices)
@@ -111,11 +117,12 @@ class SpeedTrackingAnnotator(TrackingAnnotator):
                 label_tracks.xyxy[i, 1] = min(scene.shape[0] - 1, max(label_tracks.xyxy[i, 1], 30 + height + 8))
             scene = self.labels.annotate(scene, label_tracks, labels=labels, custom_color_lookup=color_indices)
 
-        header = f"Phase 3 | frame {frame_index} | segment {segment_id}"
-        if team_a_control_pct is not None:
-            header += f" | Pitch Control A: {team_a_control_pct:.1f}% B: {100.0 - team_a_control_pct:.1f}%"
-        cv2.rectangle(scene, (0, 0), (min(scene.shape[1] - 1, 720), 30), (24, 24, 24), -1)
-        cv2.putText(scene, header, (10, 21), cv2.FONT_HERSHEY_SIMPLEX, 0.52, (240, 240, 240), 1, cv2.LINE_AA)
+        if show_debug_header:
+            header = f"Phase 3 | frame {frame_index} | segment {segment_id}"
+            if team_a_control_pct is not None:
+                header += f" | Pitch Control A: {team_a_control_pct:.1f}% B: {100.0 - team_a_control_pct:.1f}%"
+            cv2.rectangle(scene, (0, 0), (min(scene.shape[1] - 1, 720), 30), (24, 24, 24), -1)
+            cv2.putText(scene, header, (10, 21), cv2.FONT_HERSHEY_SIMPLEX, 0.52, (240, 240, 240), 1, cv2.LINE_AA)
         return scene
 
 

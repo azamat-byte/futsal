@@ -16,6 +16,8 @@ from futsal.phase1.pipeline import write_json
 from futsal.phase1.video import VideoReader, VideoWriter
 from futsal.phase3.pipeline import position_groups
 from futsal.phase3.radar import SpatialRadar
+from futsal.reid_boundary import InPlayBoundaryFilter
+from futsal.telemetry_sqlite import ShotEventDetector, TelemetrySQLiteStreamer
 from .compositor import BroadcastCompositor, mux_h264_with_audio
 
 LOG = logging.getLogger(__name__)
@@ -171,6 +173,9 @@ class Phase5Pipeline:
         movement = MovementEngine(window=self.smoothing_window)
         spatial = SpatialEngine(length=length, width=width)
         radar = SpatialRadar(length=length, width=width)
+        boundary_filter = InPlayBoundaryFilter(pitch_length_m=length, pitch_width_m=width)
+        db_streamer = TelemetrySQLiteStreamer(output / "telemetry.db")
+        shot_detector = ShotEventDetector(pitch_length_m=length, pitch_width_m=width, db_streamer=db_streamer)
 
         raw_video_path = output / "raw_broadcast.mp4"
         final_video_path = output / "broadcast_tactical.mp4"
@@ -221,9 +226,10 @@ class Phase5Pipeline:
 
                     enriched = []
                     for row in rows:
-                        move = movement.update(row, time_s, row.get("anchor_frame"))
+                        row_checked = boundary_filter.update_row(row)
+                        move = movement.update(row_checked, time_s, row_checked.get("anchor_frame"))
                         item = {
-                            **row,
+                            **row_checked,
                             **move,
                             "possession_state": possession.get("state"),
                             "possession_owner_id": possession.get("owner_id"),
@@ -231,6 +237,18 @@ class Phase5Pipeline:
                         }
                         enriched.append(item)
                         enriched_all.append(item)
+
+                    db_streamer.stream_frame(index, time_s, enriched, possession=possession, segment_id=segment)
+                    shot_ev = shot_detector.update(index, time_s, enriched, ball_pitch, possession=possession)
+                    if shot_ev is not None:
+                        emitted = list(emitted) + [
+                            {
+                                "type": "shot_made",
+                                "source_id": shot_ev["tracker_id"],
+                                "receiver_id": None,
+                                "team": shot_ev["team"],
+                            }
+                        ]
 
                     tactical = spatial.update(enriched, time_s)
                     tactical_records.append({"frame_index": index, "timestamp_s": time_s, **tactical})
@@ -300,6 +318,8 @@ class Phase5Pipeline:
 
             report = build_match_report(tracks_df, player_summary_df, events_df, tactical_records)
             report["h264_encoded"] = h264_ok
+            report["sqlite_jersey_summary"] = db_streamer.query_player_match_totals()
+            report["shot_events"] = db_streamer.query_events("Shot Made")
             write_json(output / "match_report.json", report)
 
             run_meta.update(status="completed", frames_processed=frames_done, **report)
@@ -308,6 +328,7 @@ class Phase5Pipeline:
             write_json(output / "run.json", run_meta)
             raise
         finally:
+            db_streamer.close()
             groups.close()
 
         write_json(output / "run.json", run_meta)
