@@ -16,9 +16,9 @@ import shutil
 import cv2
 import pandas as pd
 
-from futsal.phase1.config import PipelineConfig as Phase1Config
+from futsal.phase1.config import Phase1Config
+from futsal.phase1.detection import RoboflowDetector
 from futsal.phase1.pipeline import Phase1Pipeline
-from futsal.phase1.roboflow import RoboflowDetector
 from futsal.phase1.video import VideoReader
 from futsal.phase2.pipeline import Phase2Pipeline
 from futsal.phase3.pipeline import Phase3Pipeline
@@ -67,10 +67,8 @@ def run_full_pipeline(
         shutil.rmtree(p1_dir, ignore_errors=True)
         p1_config = Phase1Config()
         detector = RoboflowDetector(
-            model_id=p1_config.detector.model_id,
+            config=p1_config.detector,
             api_key=api_key,
-            confidence=p1_config.detector.confidence,
-            nms_iou=p1_config.detector.nms_iou,
         )
         Phase1Pipeline(detector, p1_config).run(
             video=video_path,
@@ -120,9 +118,8 @@ def run_full_pipeline(
         # Use Roboflow detector config for ball
         p1_config = Phase1Config()
         ball_det = RoboflowDetector(
-            model_id=p1_config.detector.model_id,
+            config=p1_config.detector,
             api_key=api_key,
-            confidence=0.1,
         )
         Phase4Pipeline(detector=ball_det, pose_estimator=None).run(
             phase2=p2_dir,
